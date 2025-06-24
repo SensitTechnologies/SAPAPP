@@ -1,0 +1,97 @@
+﻿Version Notes
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.3.0.0 - Implementation of Initial Feedback to App
+
+New Features
+	* new Logger
+
+Bug Fixes
+	* Fixed bug where Program would signal that a download finished successfully when there was an error
+
+Known Bugs
+	* Weird messages coming when doing a STM32 Download
+
+Coming Soon
+	* Automated Mode
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.2.2.1 - Fixes Bugs related to Initial Deployment
+
+Bug Fixes
+	* Software now remembers configurations between updates
+
+Known Bugs
+	* Progress bar is not working
+
+Coming Soon
+	* Automated Mode
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.2.1.1 - Initial Deployment release
+
+New Features
+	* New Field in Configuration Menu that will Change the Home Drive Location in the Config File
+	* Notifications whenever a download finishes
+
+Known Bugs
+	* Progress bar is not working
+	* Configuration data is being erased in between updates for some reason
+
+Coming Soon
+	* Automated Mode
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.1.1.4 - Final Preperations before Deployment
+
+New Features
+	* Updated App Wiki
+	* Feedback Display Changes
+	* Changes to Configuration File Formatting
+
+Bug Fixes
+	* Fixed an issue with Software not recognizing errors when downloading to STM32 microcontrollers
+
+Known Bugs
+	* Progress bar is not working
+	* Configuration data is being erased in between updates for some reason
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.1.1 - Initial UI Changes, Preperations for deployment to workers
+
+New Features
+	* Now Supports STM32 based Microcontrollers via Stm32 Cube Programmer
+	* App Now Supports Resizing and Switching from Portrait to landscape mode
+	* Even Simpler UI Design 
+	* Removed Logos to be more easily used by other companies
+	* Faster Feedback During the Download Process
+
+Bug Fixes
+	* UI is now Static
+	* Settings problem with compiled MSP430 flashing files (recompile and try again)
+
+Known Bugs
+	* Progress bar is not working
+	* Configuration data is being erased in between updates for some reason
+
+Coming Soon
+	* Updates to App and GitHub Wiki
+
+-------------------------------------------------------------------------------------------------------------
+Version 1.0.0 - Initial release
+
+Features
+	* Ability to flash compiled software to MSP430 PCBs via MSP Fet Programming tool
+	* Ability to flash compiled software to Microship AtMega via Atmel avrispmk2 Programming tool
+
+	* Simplified UI design compared to competitors
+
+Know Bugs
+	* Progress marker not reflective of upload processes
+	* UI is not static
+	* Company logo does not show on Screen
+	* Settings problem with compiled MSP430 flashing files (recompile and try again)
+
+Coming soon
+	* Ability to flash compiled software to STM32 Microcontroller via USB-A connection
+	* Progress bar will refelct the true progress of an upload
