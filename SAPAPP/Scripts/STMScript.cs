@@ -6,19 +6,13 @@ using System.Windows.Controls;
 
 namespace SAPAPP.Scripts
 {
-    internal class STMScript : Script
+    internal class STMScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb) : Script(lg, fd, pp, pb)
     {
         private string _stm32_prog_cli;
         public string STM32_Programmer_CLI
         {
             get { return string.Format("\"{0}\"", _stm32_prog_cli); }
             set { _stm32_prog_cli = value; }
-        }
-
-
-        public STMScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(lg, fd, pp, pb)
-        {
-            STM32_Programmer_CLI = cli;
         }
 
         public override void Download(Part download)

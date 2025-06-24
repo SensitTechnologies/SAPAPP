@@ -6,13 +6,9 @@ using System.Windows.Controls;
 
 namespace SAPAPP.Scripts
 {
-    internal class FetScript : Script
+    internal class FetScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb) : Script(lg, fd, pp, pb)
     {
         public string ToolsFolder { get; set; }
-        public FetScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string folder) : base(lg, fd, pp, pb)
-        {
-            ToolsFolder = folder;
-        }
 
         public override void Download(Part download)
         {

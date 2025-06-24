@@ -50,9 +50,12 @@ namespace SAPAPP
             get => _AVRDUDE_CLI;
             set
             {
-                _AVRDUDE_CLI = value;
-                MegaScript.AVRDUDE_CLI = value;
-                Save_CLIs();
+                if (value != _AVRDUDE_CLI) 
+                {
+                    _AVRDUDE_CLI = value;
+                    MegaScript.AVRDUDE_CLI = value;
+                    Save_CLIs();
+                }
             }
         }
 
@@ -62,9 +65,12 @@ namespace SAPAPP
             get => _STM32_Programmer_CLI;
             set
             {
-                _STM32_Programmer_CLI = value;
-                STMScript.STM32_Programmer_CLI = value;
-                Save_CLIs();
+                if (value != STM32_Programmer_CLI)
+                {
+                    _STM32_Programmer_CLI = value;
+                    STMScript.STM32_Programmer_CLI = value;
+                    Save_CLIs();
+                }
             }
         }
 
@@ -74,9 +80,12 @@ namespace SAPAPP
             get => _fetTools;
             set
             {
-                _fetTools = value;
-                FetScript.ToolsFolder = value;
-                Save_CLIs();
+                if (value != _fetTools)
+                {
+                    _fetTools = value;
+                    FetScript.ToolsFolder = value;
+                    Save_CLIs();
+                }
             }
         }
 
@@ -134,9 +143,9 @@ namespace SAPAPP
         private void InitializeScripts()
         {
             TestScript = new TestScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            FetScript = new FetScript(logger, StatusMessageDisplay, progressPercentage, progbar, FetTools);
-            MegaScript = new MegaScript(logger, StatusMessageDisplay, progressPercentage, progbar, AVRDUDE_CLI);
-            STMScript = new STMScript(logger, StatusMessageDisplay, progressPercentage, progbar, STM32_Programmer_CLI);
+            FetScript = new FetScript(logger, StatusMessageDisplay, progressPercentage, progbar);
+            MegaScript = new MegaScript(logger, StatusMessageDisplay, progressPercentage, progbar);
+            STMScript = new STMScript(logger, StatusMessageDisplay, progressPercentage, progbar);
         }
 
         /// <summary>
@@ -214,8 +223,10 @@ namespace SAPAPP
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
-
-            Save_CLIs();
+            if (filename != PATH_CONFIG_FILE)
+            {
+                Save_CLIs();
+            }
         }
 
         public void Save_Firmware()

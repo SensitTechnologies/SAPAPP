@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace SAPAPP.Scripts
 {
-    internal class MegaScript : Script
+    internal class MegaScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb) : Script(lg, fd, pp, pb)
     {
 
         private string _avrdudeCLI;
@@ -18,11 +18,6 @@ namespace SAPAPP.Scripts
 
         private string boardType = "m2560";
 
-
-        public MegaScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(lg, fd, pp, pb)
-        {
-            AVRDUDE_CLI = cli;
-        }
         public override void Download(Part download)
         {
             if (!backgroundWorker.IsBusy)
