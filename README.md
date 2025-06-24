@@ -42,14 +42,14 @@ Open the **Swiss-Army Programmer** from the desktop or start menu.
 - Arduino UNO R3 for Ti Fuel Gauges
 
 ### Required Software:
-- TI Uniflash for MSP430 microcontrollers
-- STM32 Cube Programmer for STM32 microcontrollers
-- AVRDUDE for Microchip Atmega microcontrollers
+For flashing certain microcontrollers, **SAP APP cannot function on its own**
+  - [**STM32 Cube Programmer**](https://www.st.com/en/development-tools/stm32cubeprog.html#st-get-software) for STM32 Microcontrollers
+  - [**AVRDUDE**](https://github.com/avrdudes/avrdude) for ATMega Microcontrollers
+  - [**TI Uniflash**](https://www.ti.com/tool/UNIFLASH?utm_source=google&utm_medium=cpc&utm_campaign=epd-der-null-44700045336317962_prodfolderdynamic-cpc-pf-google-ww_en_int&utm_content=prodfolddynamic&ds_k=DYNAMIC+SEARCH+ADS&DCM=yes&gad_source=1&gad_campaignid=12788797621&gbraid=0AAAAAC068F3MzEJzVnVkTWaFJKTRlscxS&gclid=CjwKCAjwmenCBhA4EiwAtVjzmnQSBu5Cp1eznJ5YPZoRNaYYrawTZW6Mz7yKIpYkqecOK8olu9FbHhoC0_AQAvD_BwE&gclsrc=aw.ds#downloads) for MSP430 Microcontrollers
 
 ## Resources
 
-For full documentation, visit the official Swiss-Army Programmer Wiki:
-https://github.com/SensitTechnologies/SAPAPP/wiki
+For full documentation, visit the [Official Swiss-Army Programmer Wiki](https://github.com/SensitTechnologies/SAPAPP/wiki).
 ---
 
 
