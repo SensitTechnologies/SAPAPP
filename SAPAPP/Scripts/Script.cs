@@ -98,7 +98,7 @@ namespace SAPAPP.Scripts
                 if (e.Result != null)
                 {
                     logger.Log(e.Result.ToString(), Logger.LogType.Error);
-                    FeedbackDisplay.Text = "Error: " + e.Result.ToString();
+                    FeedbackDisplay.Text = e.Result.ToString();
                 }
                 else if (e.Cancelled)
                 {
