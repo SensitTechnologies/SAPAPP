@@ -4,8 +4,14 @@ The Swiss-Army Programmer (SAP) Application streamlines firmware uploading by in
 ## Documentation
 Documentation for current release is on Github Pages.
 
-## Getting the SAP APP
-Installation guide coming soon.
+## Downloading SAP APP
+The latest version of the SAP APP can always be found on our [**Releases**](https://github.com/SensitTechnologies/SAPAPP/releases) page.
+## Configuring the SAP APP
+* Create an XML file based on the template provided that will serve as the template for your company
+* Open the app and Navigate to settings -> preferences
+* In the Window, follow the steps to configure all of the different integrations you intend to use
+* Click "Ok" on the window
+You are now ready to use the SAP APP
 
 ## User Guide
 ### Step 1: Launching the Application
