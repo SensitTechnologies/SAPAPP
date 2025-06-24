@@ -1,5 +1,6 @@
 ﻿using SAPAPP.Configs;
 using SAPAPP.Scripts;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,13 +32,13 @@ namespace SAPAPP
         /// </summary>
         public Logger logger { get; set; }
 
-        private string _sharepointLocation;
+        private string _SharePointLocation;
         public string SharePointLocation
         {
-            get { return _sharepointLocation; }
+            get { return _SharePointLocation; }
             set
             {
-                _sharepointLocation = value;
+                _SharePointLocation = value;
                 configs.DriveLocation = value;
                 Save_Firmwares();
             }
@@ -379,8 +380,15 @@ namespace SAPAPP
 
         private void Log(string message, LogType level)
         {
+
+            message = message.Trim();
+            if (message == "")
+            {
+                return;
+            }
+
             // format: time level message
-            string time = DateTime.Now.ToString("h:mm:ss tt");
+            string time = DateTime.Now.ToString(new CultureInfo("en-US"));
 
             string info = "";
             switch (level)
