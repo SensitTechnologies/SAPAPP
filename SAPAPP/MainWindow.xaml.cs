@@ -40,7 +40,7 @@ namespace SAPAPP
             {
                 _SharePointLocation = value;
                 configs.DriveLocation = value;
-                Save_Firmwares();
+                Save_Firmware();
             }
         }
 
@@ -123,7 +123,7 @@ namespace SAPAPP
             // Load product configurations for the first time
             if (!File.Exists(PRODUCT_CONFIG_FILE))
             {
-                Save_Firmwares();
+                Save_Firmware();
             }
             Load_Product_Configurations(PRODUCT_CONFIG_FILE);
         }
@@ -145,7 +145,7 @@ namespace SAPAPP
         /// <returns>The selected Product</returns>
         private Product Get_Current_Product()
         {
-            Product currentProduct = new Product();
+            Product currentProduct = new();
             foreach (Product product in configs.Products)
             {
                 if (product.ProductName == ProductPicker.Text)
@@ -165,7 +165,7 @@ namespace SAPAPP
         /// <returns>The currently selected Part</returns>
         private Part Get_Current_Part(Product product)
         {
-            Part currentPart = new Part();
+            Part currentPart = new();
             foreach (Part part in product.Parts)
             {
                 if (part.PartName == PartPicker.Text)
@@ -185,7 +185,6 @@ namespace SAPAPP
         {
             configs = Settings.Open_Firmware_Configs(filename);
             logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
-
 
             SelectionViewModel newContext = new SelectionViewModel(configs);
             if (filename != PRODUCT_CONFIG_FILE)
@@ -209,17 +208,17 @@ namespace SAPAPP
                 Dictionary<string, string> selection = Settings.Load_Dictionary_Configs(filename);
                 if (selection != null)
                 {
-                    STM32_Programmer_CLI = selection.ContainsKey("STM32") ? selection["STM32"] : "";
-                    AVRDUDE_CLI = selection.ContainsKey("AVRDUDE") ? selection["AVRDUDE"] : "";
-                    FetTools = selection.ContainsKey("FETTOOLS") ? selection["FETTOOLS"] : "";
+                    STM32_Programmer_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
+                    AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
+                    FetTools = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
 
             Save_CLIs();
         }
-        
-        public void Save_Firmwares()
+
+        public void Save_Firmware()
         {
             Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
             logger.Log("Saved Firmware Configurations to File: " + PRODUCT_CONFIG_FILE, LogType.Info);
@@ -230,10 +229,12 @@ namespace SAPAPP
         /// </summary>
         public void Save_CLIs()
         {
-            Dictionary<string, string> selections = new Dictionary<string, string>();
-            selections.Add("STM32", STM32_Programmer_CLI);
-            selections.Add("AVRDUDE", AVRDUDE_CLI);
-            selections.Add("FETTOOLS", FetTools);
+            Dictionary<string, string> selections = new()
+            {
+                { "STM32", STM32_Programmer_CLI },
+                { "AVRDUDE", AVRDUDE_CLI },
+                { "FETTOOLS", FetTools }
+            };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
             logger.Log("Saved Program integration configurations to file: " + PATH_CONFIG_FILE, LogType.Info);
@@ -263,12 +264,12 @@ namespace SAPAPP
 
             switch (currentPart.Architecture.ToLower())
             {
-                case "---": TestScript.Download(currentPart); break;
-                case "msp430": FetScript.Download(currentPart); break;
+                //case "---": TestScript.Download(currentPart); break;
+                //case "msp430": FetScript.Download(currentPart); break;
                 case "atmega": MegaScript.Download(currentPart); break;
                 case "stm32": STMScript.Download(currentPart); break;
-                case "laird": break;
-                case "fuel gauge": break;
+                //case "laird": break;
+                //case "fuel gauge": break;
                 default: break;
 
             }
@@ -344,8 +345,10 @@ namespace SAPAPP
         {
             StatusMessageDisplay.Text = "Preferences option selected";
 
-            PreferencesDialog preferencesDialog = new(this);
-            preferencesDialog.Owner = this;  // Sets MainWindow as the owner
+            PreferencesDialog preferencesDialog = new(this)
+            {
+                Owner = this  // Sets MainWindow as the owner
+            };
             preferencesDialog.ShowDialog();  // Opens it as a modal window
         }
 
@@ -358,8 +361,10 @@ namespace SAPAPP
         {
             StatusMessageDisplay.Text = "Wiki option selected";
 
-            WikiDialog wikiDialog = new();
-            wikiDialog.Owner = this;  // Sets MainWindow as the owner
+            WikiDialog wikiDialog = new()
+            {
+                Owner = this  // Sets MainWindow as the owner
+            };
             wikiDialog.ShowDialog();  // Opens it as a modal window
         }
 
@@ -530,8 +535,7 @@ namespace SAPAPP
 
             if (GridBackground != null)
             {
-                ImageBrush bg = GridBackground.Background as ImageBrush;
-                if (bg != null)
+                if (GridBackground.Background is ImageBrush bg)
                 {
                     // Adjust background stretch based on orientation
                     bg.Stretch = e.NewSize.Width > e.NewSize.Height ? Stretch.UniformToFill : Stretch.Fill;
