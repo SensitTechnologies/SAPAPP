@@ -1,7 +1,6 @@
 ﻿using SAPAPP.Configs;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,7 +19,7 @@ namespace SAPAPP.Scripts
         private string boardType = "m2560";
 
 
-        public MegaScript(TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(fd, pp, pb)
+        public MegaScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(lg, fd, pp, pb)
         {
             AVRDUDE_CLI = cli;
         }
@@ -100,8 +99,24 @@ namespace SAPAPP.Scripts
                     WorkingDirectory = currentDownload.FullFirmwarePath()
                 }
             };
-            cmd.OutputDataReceived += Cmd_OutputDataReceived;
-            cmd.ErrorDataReceived += Cmd_OutputDataReceived;
+
+            cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    logger.Log(eventArgs.Data, Logger.LogType.Info);
+                    UpdateProgress(eventArgs.Data);
+                }
+            });
+            cmd.ErrorDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    e.Result = eventArgs.Data;
+                    logger.Log(eventArgs.Data, Logger.LogType.Error);
+                    HandleError(eventArgs.Data);
+                }
+            });
 
             cmd.Start();
             if (!testing)
@@ -126,7 +141,7 @@ namespace SAPAPP.Scripts
             {
                 cmd.Close();
             }
-            
+
         }
 
         private string GetConnection()
@@ -181,26 +196,6 @@ namespace SAPAPP.Scripts
             return string.Format(fullformat, boardType, serial);
         }
 
-        private void Cmd_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                HandleError(e.Data);
-            }
-        }
-
-        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                if (e.Data.Contains('%'))
-                {
-                    MessageBox.Show(e.Data);
-                }
-                UpdateProgress(line: e.Data);
-            }
-        }
-
         protected override void HandleError(string line)
         {
             string message, header;
@@ -214,8 +209,8 @@ namespace SAPAPP.Scripts
 
         protected override void UpdateProgress(string line)
         {
-            int? progress = null;
-            string? DisplayMessage = null;
+            int progress = -1;
+            string DisplayMessage = "";
 
             line = line.Trim();
             string[] words = line.Split(' ');
@@ -237,10 +232,19 @@ namespace SAPAPP.Scripts
             else if (line.Contains('%'))
             {
                 progress = int.Parse(words[^2].Trim('%'));
-                DisplayMessage = null;
+                DisplayMessage = "";
             }
 
-            UpdateProgressFeedback(progress, DisplayMessage);
+
+            if (progress > 100)
+            {
+                progress = 100;
+            }
+            if (progress > 0)
+            {
+                backgroundWorker.ReportProgress(progress);
+            }
+            UpdateProgressFeedback(DisplayMessage);
         }
     }
 }

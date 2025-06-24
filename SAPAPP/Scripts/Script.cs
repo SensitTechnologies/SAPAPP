@@ -14,6 +14,7 @@ namespace SAPAPP.Scripts
         protected Part currentDownload = new();
 
         // Feedback Devices
+        protected Logger logger;
         protected TextBlock FeedbackDisplay;
         protected TextBlock progressPercentage;
         protected ProgressBar progbar;
@@ -21,11 +22,13 @@ namespace SAPAPP.Scripts
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="lg"></param>
         /// <param name="fd"></param>
         /// <param name="pp"></param>
         /// <param name="pb"></param>
-        public Script(TextBlock fd, TextBlock pp, ProgressBar pb)
+        public Script(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb)
         {
+            logger = lg;
             FeedbackDisplay = fd;
             progressPercentage = pp;
             progbar = pb;
@@ -80,7 +83,11 @@ namespace SAPAPP.Scripts
         // This event handler updates the progress.
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //FeedbackDisplay.Text = (e.ProgressPercentage.ToString() + "%");
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                progbar.Value = (double)e.ProgressPercentage;
+                progressPercentage.Text = e.ProgressPercentage.ToString() + '%';
+            });
         }
 
         // This event handler deals with the results of the background operation.
@@ -88,16 +95,23 @@ namespace SAPAPP.Scripts
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                if (e.Cancelled)
+                if (e.Result != null)
+                {
+                    logger.Log(e.Result.ToString(), Logger.LogType.Error);
+                    FeedbackDisplay.Text = "Error: " + e.Result.ToString();
+                }
+                else if (e.Cancelled)
                 {
                     FeedbackDisplay.Text = "Canceled!";
                 }
                 else if (e.Error != null)
                 {
+                    logger.Log(e.Error.Message, Logger.LogType.Error);
                     FeedbackDisplay.Text = "Error: " + e.Error.Message;
                 }
                 else
                 {
+                    logger.Log("Download Finished Successfully!", Logger.LogType.Pass);
                     MessageBox.Show("Download Finished Successfully!", "Download Finished", MessageBoxButton.OK, MessageBoxImage.Information);
                     FeedbackDisplay.Text = "Done!";
                 }
@@ -117,22 +131,13 @@ namespace SAPAPP.Scripts
         /// <param name="line"></param>
         protected abstract void UpdateProgress(string line);
 
-        protected void UpdateProgressFeedback(int? progress, string message)
+        protected void UpdateProgressFeedback(string message)
         {
-            if ((progress != null) && (progress > 100))
-            {
-                progress = 100;
-            }
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (progress != null)
-                {
-                    progbar.Value = (double)progress;
-                    progressPercentage.Text = progress.ToString() + '%';
-                }
                 if ((message != null) && (message != ""))
-                { 
-                    FeedbackDisplay.Text = message; 
+                {
+                    FeedbackDisplay.Text = message;
                 }
             });
             System.Threading.Thread.Sleep(delay);

@@ -6,10 +6,10 @@ using System.Windows.Controls;
 
 namespace SAPAPP.Scripts
 {
-    internal class FetScript: Script
+    internal class FetScript : Script
     {
         public string ToolsFolder { get; set; }
-        public FetScript(TextBlock fd, TextBlock pp, ProgressBar pb, string folder) : base(fd, pp, pb)
+        public FetScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string folder) : base(lg, fd, pp, pb)
         {
             ToolsFolder = folder;
         }
@@ -28,7 +28,7 @@ namespace SAPAPP.Scripts
             BackgroundWorker? worker = sender as BackgroundWorker;
 
             string strCmdText = string.Format(
-                "FetExecutor.bat \"{0}\" \"user_files\\configs\\{1}.ccxml\"", 
+                "FetExecutor.bat \"{0}\" \"user_files\\configs\\{1}.ccxml\"",
                 currentDownload.FullFirmwarePath(), currentDownload.Chip);
 
             Process cmd = new()
@@ -45,9 +45,23 @@ namespace SAPAPP.Scripts
                 }
             };
 
-            cmd.OutputDataReceived += Cmd_OutputDataReceived;
-            cmd.ErrorDataReceived += Cmd_ErrorDataReceived;
-
+            cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    logger.Log(eventArgs.Data, Logger.LogType.Info);
+                    UpdateProgress(eventArgs.Data);
+                }
+            });
+            cmd.ErrorDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    e.Result = eventArgs.Data;
+                    logger.Log(eventArgs.Data, Logger.LogType.Error);
+                    HandleError(eventArgs.Data);
+                }
+            });
 
             cmd.Start();
             if (!testing)
@@ -74,26 +88,8 @@ namespace SAPAPP.Scripts
             }
         }
 
-        private void Cmd_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                HandleError(e.Data);
-            }
-        }
-
-        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                UpdateProgress(e.Data);
-            }
-        }
-
         protected override void HandleError(string line)
         {
-            Cancel();
-
             line = line.Trim();
             string message, header;
             if (line.Contains("system cannot find the path specified", StringComparison.CurrentCultureIgnoreCase)) // package needs to be recompiled
@@ -113,12 +109,13 @@ namespace SAPAPP.Scripts
             }
 
             MessageBox.Show(message, header, MessageBoxButton.OK, MessageBoxImage.Error);
+            Cancel();
         }
 
         protected override void UpdateProgress(string line)
         {
-            int? progress = null;
-            string? DisplayMessage = null;
+            int progress = -1;
+            string DisplayMessage = "";
 
 
             line = line.Trim();
@@ -153,8 +150,15 @@ namespace SAPAPP.Scripts
                 DisplayMessage = words[0] + ' ' + words[1] + ' ' + currentDownload.FullFirmwarePath();
             }
 
-
-            UpdateProgressFeedback(progress, DisplayMessage);
+            if (progress > 100)
+            {
+                progress = 100;
+            }
+            if (progress > 0)
+            {
+                backgroundWorker.ReportProgress(progress);
+            }
+            UpdateProgressFeedback(DisplayMessage);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace SAPAPP.Scripts
 {
-    internal class TestScript(TextBlock fd, TextBlock pp, ProgressBar pb) : Script(fd, pp, pb)
+    internal class TestScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb) : Script(lg, fd, pp, pb)
     {
         public override void Download(Part download)
         {
@@ -40,8 +40,21 @@ namespace SAPAPP.Scripts
                     WorkingDirectory = firmwareDir,
                 }
             };
-            cmd.OutputDataReceived += Cmd_OutputDataReceived;
-            cmd.ErrorDataReceived += Cmd_ErrorDataReceived;
+            cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    UpdateProgress(eventArgs.Data);
+                }
+            });
+            cmd.ErrorDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    e.Result = eventArgs.Data;
+                    HandleError(eventArgs.Data);
+                }
+            });
 
             cmd.Start();
             if (!testing)
@@ -68,21 +81,6 @@ namespace SAPAPP.Scripts
             }
         }
 
-        private void Cmd_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                HandleError(e.Data);
-            }
-        }
-
-        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                UpdateProgress(line: e.Data);
-            }
-        }
 
         protected override void HandleError(string line)
         {
@@ -91,10 +89,7 @@ namespace SAPAPP.Scripts
 
         protected override void UpdateProgress(string line)
         {
-            int? progress = null;
-            string? DisplayMessage = line;
-
-            UpdateProgressFeedback(progress, DisplayMessage);
+            UpdateProgressFeedback(line);
         }
     }
 }
