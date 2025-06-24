@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static SAPAPP.Logger;
 
 
 namespace SAPAPP
@@ -19,17 +20,24 @@ namespace SAPAPP
 
         private FirmwareConfigs configs = new();
 
-        private static readonly string App_Data_Folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP");
-        private static readonly string product_config_File = Path.Combine(App_Data_Folder, "FirmwareConfigurations.xml");
-        private static readonly string path_config_File = Path.Combine(App_Data_Folder, "CLI_configs.json");
+        private static string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP");
+        private static string PRODUCT_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "FirmwareConfigurations.xml");
+        private static string PATH_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "CLI_configs.json");
+        private static string LOGGER_FILE = Path.Combine(APP_DATA_FOLDER, "log.txt");
+
+        /// <summary>
+        /// This handles printing informational statements to help for debugging and provide extra
+        /// information to the user.
+        /// </summary>
+        public Logger logger { get; set; }
 
         private string _SharePointLocation;
         public string SharePointLocation
         {
-            get { return _SharePointLocation; }
-            set 
-            { 
-                _SharePointLocation = value;
+            get { return _sharepointLocation; }
+            set
+            {
+                _sharepointLocation = value;
                 configs.DriveLocation = value;
                 Save_Firmware();
             }
@@ -77,9 +85,14 @@ namespace SAPAPP
         public MainWindow()
         {
             InitializeComponent();
+            logger = new(Log);
+            logger.Log("Launching App", LogType.Info);
+            logger.Log("Initializing Startup", LogType.Info);
+
 
             InitializeScripts();
             ConfigureOnStartup();
+            logger.Log("Startup Complete", LogType.Info);
         }
 
 
@@ -88,25 +101,30 @@ namespace SAPAPP
         private void ConfigureOnStartup()
         {
 
-            if (!Directory.Exists(App_Data_Folder))
+            if (!Directory.Exists(APP_DATA_FOLDER))
             {
-                Directory.CreateDirectory(App_Data_Folder);
+                Directory.CreateDirectory(APP_DATA_FOLDER);
             }
 
+            if (!File.Exists(LOGGER_FILE))
+            {
+                File.Create(LOGGER_FILE);
+            }
 
             // Load pathing configurations for the first time
-            if (!File.Exists(path_config_File))
+            Dictionary<string, string> selections = new Dictionary<string, string>();
+            if (!File.Exists(PATH_CONFIG_FILE))
             {
                 Save_CLIs();
             }
-            Load_CLIs(path_config_File);
+            Load_CLIs(PATH_CONFIG_FILE);
 
             // Load product configurations for the first time
-            if (!File.Exists(product_config_File))
+            if (!File.Exists(PRODUCT_CONFIG_FILE))
             {
                 Save_Firmware();
             }
-            Load_Product_Configurations(product_config_File);
+            Load_Product_Configurations(PRODUCT_CONFIG_FILE);
         }
 
         /// <summary>
@@ -114,10 +132,10 @@ namespace SAPAPP
         /// </summary>
         private void InitializeScripts()
         {
-            TestScript = new TestScript(StatusMessageDisplay, progressPercentage, progbar);
-            FetScript = new FetScript(StatusMessageDisplay, progressPercentage, progbar, FetTools);
-            MegaScript = new MegaScript(StatusMessageDisplay, progressPercentage, progbar, AVRDUDE_CLI);
-            STMScript = new STMScript(StatusMessageDisplay, progressPercentage, progbar, STM32_Programmer_CLI);
+            TestScript = new TestScript(logger, StatusMessageDisplay, progressPercentage, progbar);
+            FetScript = new FetScript(logger, StatusMessageDisplay, progressPercentage, progbar, FetTools);
+            MegaScript = new MegaScript(logger, StatusMessageDisplay, progressPercentage, progbar, AVRDUDE_CLI);
+            STMScript = new STMScript(logger, StatusMessageDisplay, progressPercentage, progbar, STM32_Programmer_CLI);
         }
 
         /// <summary>
@@ -165,12 +183,12 @@ namespace SAPAPP
         public void Load_Product_Configurations(string filename)
         {
             configs = Settings.Open_Firmware_Configs(filename);
+            logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
 
-
-            SelectionViewModel newContext = new(configs);
-            if (filename != product_config_File)
+            SelectionViewModel newContext = new SelectionViewModel(configs);
+            if (filename != PRODUCT_CONFIG_FILE)
             {
-                Settings.Save_Firmware_Configs(configs, product_config_File);
+                Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
                 newContext.SelectedProduct = "---";
                 newContext.SelectedPart = "---";
             }
@@ -193,13 +211,16 @@ namespace SAPAPP
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
                     FetTools = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
                 }
+                logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
 
             Save_CLIs();
         }
+
         public void Save_Firmware()
         {
-            Settings.Save_Firmware_Configs(configs, product_config_File);
+            Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
+            logger.Log("Saved Firmware Configurations to File: " + PRODUCT_CONFIG_FILE, LogType.Info);
         }
 
         /// <summary>
@@ -214,7 +235,8 @@ namespace SAPAPP
                 { "FETTOOLS", FetTools }
             };
 
-            Settings.Save_Dictionary_Configs(selections, path_config_File);
+            Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
+            logger.Log("Saved Program integration configurations to file: " + PATH_CONFIG_FILE, LogType.Info);
         }
 
         #endregion
@@ -357,6 +379,40 @@ namespace SAPAPP
         {
             progbar.IsIndeterminate = false;
             progbar.Value = 0;
+        }
+
+
+        private void Log(string message, LogType level)
+        {
+            // format: time level message
+            string time = DateTime.Now.ToString("h:mm:ss tt");
+
+            string info = "";
+            switch (level)
+            {
+                case LogType.Info:
+                    info = "<INF0>";
+                    break;
+                case LogType.Warn:
+                    info = "<WARNING>";
+                    break;
+                case LogType.Error:
+                    info = "<ERROR>";
+                    break;
+                case LogType.Pass:
+                    info = "<PASS>";
+                    break;
+                case LogType.Fail:
+                    info = "<FAIL>";
+                    break;
+            }
+
+            string format = "{0} {1} {2}";
+            using (StreamWriter outputFile = new StreamWriter(LOGGER_FILE, true))
+            {
+                outputFile.WriteLine(string.Format(format, time, info, message));
+                outputFile.Close();
+            }
         }
 
         #endregion

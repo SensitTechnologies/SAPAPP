@@ -12,7 +12,7 @@ namespace SAPAPP.Scripts
         private readonly SerialPort serialPort;
         private const int BaudRate = 115200;
 
-        public TIScript(TextBlock fd, TextBlock pp, ProgressBar pb, string portName) : base(fd, pp, pb)
+        public TIScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string portName) : base(lg, fd, pp, pb)
         {
             serialPort = new SerialPort(portName, BaudRate);
             serialPort.DataReceived += SerialPort_DataReceived;

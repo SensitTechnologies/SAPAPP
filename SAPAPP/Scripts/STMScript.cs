@@ -16,7 +16,7 @@ namespace SAPAPP.Scripts
         }
 
 
-        public STMScript(TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(fd, pp, pb)
+        public STMScript(Logger lg, TextBlock fd, TextBlock pp, ProgressBar pb, string cli) : base(lg, fd, pp, pb)
         {
             STM32_Programmer_CLI = cli;
         }
@@ -25,6 +25,7 @@ namespace SAPAPP.Scripts
         {
             if (!backgroundWorker.IsBusy)
             {
+                logger.Log("Starting Download", Logger.LogType.Info);
                 currentDownload = download;
                 backgroundWorker.RunWorkerAsync();
             }
@@ -44,7 +45,7 @@ namespace SAPAPP.Scripts
             string strCmdText = STM32_Programmer_CLI + " " + connect + " " + write;
             string firmwareDir = currentDownload.FirmwareFolder;
 
-            
+
             Process cmd = new()
             {
                 StartInfo = new()
@@ -58,8 +59,33 @@ namespace SAPAPP.Scripts
                 }
             };
 
-            cmd.OutputDataReceived += Cmd_OutputDataReceived;
-            cmd.ErrorDataReceived += Cmd_ErrorDataReceived;
+            cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    string line = eventArgs.Data;
+                    if (line.Contains("Error:"))
+                    {
+                        e.Result = eventArgs.Data;
+                        logger.Log(eventArgs.Data, Logger.LogType.Error);
+                        HandleError(eventArgs.Data);
+                    }
+                    else
+                    {
+                        logger.Log(eventArgs.Data, Logger.LogType.Info);
+                        UpdateProgress(eventArgs.Data);
+                    }
+                }
+            });
+            cmd.ErrorDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    e.Result = eventArgs.Data;
+                    logger.Log(eventArgs.Data, Logger.LogType.Error);
+                    HandleError(eventArgs.Data);
+                }
+            });
 
 
             cmd.Start();
@@ -85,23 +111,6 @@ namespace SAPAPP.Scripts
             {
                 cmd.Close();
             }
-            
-        }
-
-        private void Cmd_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                HandleError(e.Data);
-            }
-        }
-
-        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data != null)
-            {
-                UpdateProgress(e.Data);
-            }
         }
 
         protected override void HandleError(string line)
@@ -118,18 +127,13 @@ namespace SAPAPP.Scripts
 
         protected override void UpdateProgress(string line)
         {
-            int? progress = null;
-            string? DisplayMessage = null;
+            int progress = -1;
+            string DisplayMessage = "";
 
             line = line.Trim();
             string[] words = line.Split(' ');
 
-            if (line.Contains("Error:"))
-            {
-                HandleError(line);
-                return;
-            }
-            else if (!line.Contains("--"))
+            if (!line.Contains("--"))
             {
                 DisplayMessage = line;
             }
@@ -142,10 +146,18 @@ namespace SAPAPP.Scripts
             else if (line.Contains('%'))
             {
                 progress = int.Parse(words[^1].Trim('%'));
-                DisplayMessage = null;
+                DisplayMessage = "";
             }
 
-            UpdateProgressFeedback(progress, DisplayMessage);
+            if (progress > 100)
+            {
+                progress = 100;
+            }
+            if (progress > 0)
+            {
+                backgroundWorker.ReportProgress((int)progress);
+            }
+            UpdateProgressFeedback(DisplayMessage);
         }
     }
 }
