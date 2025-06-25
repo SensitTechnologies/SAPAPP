@@ -14,6 +14,8 @@ namespace SAPAPP
     {
         #region instanceVariables
 
+        private bool _BeyondStartup = false;
+
         private TestScript TestScript;
         private FetScript FetScript;
         private MegaScript MegaScript;
@@ -52,7 +54,10 @@ namespace SAPAPP
             {
                 _AVRDUDE_CLI = value;
                 MegaScript.AVRDUDE_CLI = value;
-                Save_CLIs();
+                if (_BeyondStartup)
+                {
+                    Save_CLIs();
+                }
             }
         }
 
@@ -64,7 +69,10 @@ namespace SAPAPP
             {
                 _STM32_Programmer_CLI = value;
                 STMScript.STM32_Programmer_CLI = value;
-                Save_CLIs();
+                if (_BeyondStartup)
+                {
+                    Save_CLIs();
+                }
             }
         }
 
@@ -76,7 +84,10 @@ namespace SAPAPP
             {
                 _fetTools = value;
                 FetScript.ToolsFolder = value;
-                Save_CLIs();
+                if (_BeyondStartup)
+                {
+                    Save_CLIs();
+                }
             }
         }
 
