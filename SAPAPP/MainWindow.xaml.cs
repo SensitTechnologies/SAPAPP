@@ -62,11 +62,9 @@ namespace SAPAPP
             get => _STM32_Programmer_CLI;
             set
             {
-
                 _STM32_Programmer_CLI = value;
                 STMScript.STM32_Programmer_CLI = value;
                 Save_CLIs();
-
             }
         }
 
@@ -76,11 +74,9 @@ namespace SAPAPP
             get => _fetTools;
             set
             {
-
                 _fetTools = value;
                 FetScript.ToolsFolder = value;
                 Save_CLIs();
-
             }
         }
 
@@ -111,13 +107,13 @@ namespace SAPAPP
             if (!Directory.Exists(APP_DATA_FOLDER))
             {
                 Directory.CreateDirectory(APP_DATA_FOLDER);
-                logger.Log("Launching App", LogType.Info);
-                logger.Log("Initializing Startup", LogType.Info);
             }
 
             if (!File.Exists(LOGGER_FILE))
             {
                 File.Create(LOGGER_FILE);
+                logger.Log("Launching App", LogType.Info);
+                logger.Log("Initializing Startup", LogType.Info);
             }
 
             // Load pathing configurations for the first time
