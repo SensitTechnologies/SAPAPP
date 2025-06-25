@@ -50,12 +50,11 @@ namespace SAPAPP
             get => _AVRDUDE_CLI;
             set
             {
-                if (value != _AVRDUDE_CLI) 
-                {
-                    _AVRDUDE_CLI = value;
-                    MegaScript.AVRDUDE_CLI = value;
-                    Save_CLIs();
-                }
+
+                _AVRDUDE_CLI = value;
+                MegaScript.AVRDUDE_CLI = value;
+                Save_CLIs();
+
             }
         }
 
@@ -65,12 +64,11 @@ namespace SAPAPP
             get => _STM32_Programmer_CLI;
             set
             {
-                if (value != STM32_Programmer_CLI)
-                {
-                    _STM32_Programmer_CLI = value;
-                    STMScript.STM32_Programmer_CLI = value;
-                    Save_CLIs();
-                }
+
+                _STM32_Programmer_CLI = value;
+                STMScript.STM32_Programmer_CLI = value;
+                Save_CLIs();
+
             }
         }
 
@@ -80,12 +78,11 @@ namespace SAPAPP
             get => _fetTools;
             set
             {
-                if (value != _fetTools)
-                {
-                    _fetTools = value;
-                    FetScript.ToolsFolder = value;
-                    Save_CLIs();
-                }
+
+                _fetTools = value;
+                FetScript.ToolsFolder = value;
+                Save_CLIs();
+
             }
         }
 
