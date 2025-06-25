@@ -50,11 +50,9 @@ namespace SAPAPP
             get => _AVRDUDE_CLI;
             set
             {
-
                 _AVRDUDE_CLI = value;
                 MegaScript.AVRDUDE_CLI = value;
                 Save_CLIs();
-
             }
         }
 
@@ -93,9 +91,11 @@ namespace SAPAPP
         {
             InitializeComponent();
             logger = new(Log);
-            logger.Log("Launching App", LogType.Info);
-            logger.Log("Initializing Startup", LogType.Info);
-
+            if (File.Exists(LOGGER_FILE))
+            {
+                logger.Log("Launching App", LogType.Info);
+                logger.Log("Initializing Startup", LogType.Info);
+            }
 
             InitializeScripts();
             ConfigureOnStartup();
@@ -111,6 +111,8 @@ namespace SAPAPP
             if (!Directory.Exists(APP_DATA_FOLDER))
             {
                 Directory.CreateDirectory(APP_DATA_FOLDER);
+                logger.Log("Launching App", LogType.Info);
+                logger.Log("Initializing Startup", LogType.Info);
             }
 
             if (!File.Exists(LOGGER_FILE))
