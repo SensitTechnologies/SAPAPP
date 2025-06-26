@@ -1,4 +1,5 @@
 ﻿using SAPAPP.Configs;
+using SAPAPP.Controllers;
 using SAPAPP.Scripts;
 using System.Globalization;
 using System.IO;
@@ -14,16 +15,18 @@ namespace SAPAPP
     {
         #region instanceVariables
 
-        private bool _BeyondStartup = false;
+        private bool _BeyondStartup = true;
 
         private TestScript TestScript;
         private FetScript FetScript;
         private MegaScript MegaScript;
         private STMScript STMScript;
 
+        private DownloadController DownloadController;
+
         private FirmwareConfigs configs = new();
 
-        private static string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP");
+        private static string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP_DebugTesting");
         private static string PRODUCT_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "FirmwareConfigurations.xml");
         private static string PATH_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "CLI_configs.json");
         private static string LOGGER_FILE = Path.Combine(APP_DATA_FOLDER, "log.txt");
@@ -69,6 +72,7 @@ namespace SAPAPP
             {
                 _STM32_Programmer_CLI = value;
                 STMScript.STM32_Programmer_CLI = value;
+                DownloadController.STM32_Programmer_CLI = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -148,10 +152,12 @@ namespace SAPAPP
         /// </summary>
         private void InitializeScripts()
         {
-            TestScript = new TestScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            FetScript = new FetScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            MegaScript = new MegaScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            STMScript = new STMScript(logger, StatusMessageDisplay, progressPercentage, progbar);
+            DownloadController = new DownloadController(logger, UpdateFeedbackMessages, UpdateProgressBar);
+
+            TestScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
+            FetScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
+            MegaScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
+            STMScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
         }
 
         /// <summary>
@@ -270,10 +276,22 @@ namespace SAPAPP
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             StartButton.IsEnabled = false;
+            StopButton.IsEnabled = true;
             SetButtonAppearance(StartButton, Brushes.Green, Brushes.White);
             SetButtonAppearance(StopButton, Brushes.White, Brushes.Black);
             ResetProgressBar();
 
+            Product currentProduct = Get_Current_Product();
+            Part currentPart = Get_Current_Part(currentProduct);
+
+            DownloadController.StartRunning(currentPart);
+            
+            if (!DownloadController.AutomaticOn)
+            {
+                StartButton.IsEnabled = true;
+            }
+
+            /*
             StatusMessageDisplay.Text = "Starting Download";
 
             Product currentProduct = Get_Current_Product();
@@ -292,6 +310,7 @@ namespace SAPAPP
             }
 
             StartButton.IsEnabled = true;
+            */
         }
 
         /// <summary>
@@ -301,12 +320,20 @@ namespace SAPAPP
         /// <param name="e"></param>
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            StartButton.IsEnabled = true;
+            StopButton.IsEnabled = false;
+
             SetButtonAppearance(StartButton, Brushes.White, Brushes.Black);
             SetButtonAppearance(StopButton, Brushes.Red, Brushes.White);
 
 
             Product currentProduct = Get_Current_Product();
             Part currentPart = Get_Current_Part(currentProduct);
+
+            //DetectionTester.Cancel();
+            DownloadController.StopRunning();
+
+            /*
             switch (currentPart.Architecture)
             {
                 case "---": TestScript.Cancel(); break;
@@ -317,6 +344,7 @@ namespace SAPAPP
             }
 
             StatusMessageDisplay.Text = "Download Canceled";
+            */
         }
 
         /// <summary>
@@ -395,10 +423,8 @@ namespace SAPAPP
         /// </summary>
         private void ResetProgressBar()
         {
-            progbar.IsIndeterminate = false;
             progbar.Value = 0;
         }
-
 
         private void Log(string message, LogType level)
         {
@@ -438,6 +464,31 @@ namespace SAPAPP
                 outputFile.WriteLine(string.Format(format, time, info, message));
                 outputFile.Close();
             }
+        }
+
+        private void UpdateFeedbackMessages(string message)
+        {
+            if ((message != null) && (message != ""))
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusMessageDisplay.Text = message;
+                });
+            }
+        }
+
+        private void UpdateProgressBar(double progress)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                progbar.Value = progress;
+                progressPercentage.Text = progress.ToString() + '%';
+            });
+        }
+
+        private void UpdateProgressBar(int progress)
+        {
+            UpdateProgressBar((double)progress);
         }
 
         #endregion

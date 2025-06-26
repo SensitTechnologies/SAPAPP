@@ -19,7 +19,7 @@ namespace SAPAPP
         public ObservableCollection<string> ProductsList { get; set; }
         public ObservableCollection<string> PartsList { get; set; }
         public Dictionary<string, List<string>> ProductPartMap { get; set; }
-        private static string selections_save_File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP", "selection.json");
+        private static string selections_save_File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP_DebugTesting", "selection.json");
 
         private string _selectedProduct;
         public string SelectedProduct
