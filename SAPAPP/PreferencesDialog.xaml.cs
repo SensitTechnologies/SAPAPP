@@ -204,12 +204,12 @@ namespace SAPAPP
             }
             if (STM32PathTextBox.Text != "")
             {
-                parentWindow.STM32_Programmer_CLI = STM32PathTextBox.Text;
+                parentWindow.STM32_PROGRAMMER_CLI = STM32PathTextBox.Text;
             }
 
             if (FetToolsTextBox.Text != "")
             {
-                parentWindow.FetTools = FetToolsTextBox.Text;
+                parentWindow.MSP430_TOOLS_FOLDER = FetToolsTextBox.Text;
             }
 
             if (ATmegaPathTextBox.Text != "")

@@ -2,6 +2,7 @@
 using SAPAPP.Configs;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows;
 
 namespace SAPAPP.Controllers
 {
@@ -14,9 +15,10 @@ namespace SAPAPP.Controllers
         private Script[] scripts = [];
         private STMScript STMScript = new();
         private MegaScript MegaScript = new();
+        private MSP430Script MSPScript = new();
 
 
-        public string STM32_Programmer_CLI
+        public string STM32_PROGRAMMER_CLI
         {
             get { return STMScript.STM32_Programmer_CLI; }
             set { STMScript.STM32_Programmer_CLI = value; }
@@ -26,7 +28,11 @@ namespace SAPAPP.Controllers
             get { return MegaScript.AVRDUDE_CLI; }
             set { MegaScript.AVRDUDE_CLI = value; }
         }
-
+        public string MSP430_TOOLS_FOLDER
+        {
+            get { return MSPScript.MSP430ToolsFolder; }
+            set { MSPScript.MSP430ToolsFolder = value; }
+        }
 
         // current firmware to flash
         private Part currentDownload = new();
@@ -75,8 +81,9 @@ namespace SAPAPP.Controllers
 
             STMScript = new STMScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
             MegaScript = new MegaScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            MSPScript = new MSP430Script(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
 
-            scripts = [STMScript,  MegaScript];
+            scripts = [STMScript,  MegaScript, MSPScript];
         }
 
         public DownloadController(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : this(logger)

@@ -41,13 +41,13 @@ namespace SAPAPP
             }
         }
 
-        private string _AVRDUDE_CLI;
+        private string _avrdude_cli;
         public string AVRDUDE_CLI
         {
-            get => _AVRDUDE_CLI;
+            get => _avrdude_cli;
             set
             {
-                _AVRDUDE_CLI = value;
+                _avrdude_cli = value;
                 DownloadController.AVRDUDE_CLI = value;
                 if (_BeyondStartup)
                 {
@@ -56,14 +56,14 @@ namespace SAPAPP
             }
         }
 
-        private string _STM32_Programmer_CLI;
-        public string STM32_Programmer_CLI
+        private string _stm32_programmer_cli;
+        public string STM32_PROGRAMMER_CLI
         {
-            get => _STM32_Programmer_CLI;
+            get => _stm32_programmer_cli;
             set
             {
-                _STM32_Programmer_CLI = value;
-                DownloadController.STM32_Programmer_CLI = value;
+                _stm32_programmer_cli = value;
+                DownloadController.STM32_PROGRAMMER_CLI = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -71,13 +71,14 @@ namespace SAPAPP
             }
         }
 
-        private string _fetTools;
-        public string FetTools
+        private string _msp430_tools_folder;
+        public string MSP430_TOOLS_FOLDER
         {
-            get => _fetTools;
+            get => _msp430_tools_folder;
             set
             {
-                _fetTools = value;
+                _msp430_tools_folder = value;
+                DownloadController.MSP430_TOOLS_FOLDER = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -214,9 +215,9 @@ namespace SAPAPP
                 Dictionary<string, string> selection = Settings.Load_Dictionary_Configs(filename);
                 if (selection != null)
                 {
-                    STM32_Programmer_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
+                    STM32_PROGRAMMER_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
-                    FetTools = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
+                    MSP430_TOOLS_FOLDER = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
@@ -239,9 +240,9 @@ namespace SAPAPP
         {
             Dictionary<string, string> selections = new()
             {
-                { "STM32", STM32_Programmer_CLI },
+                { "STM32", STM32_PROGRAMMER_CLI },
                 { "AVRDUDE", AVRDUDE_CLI },
-                { "FETTOOLS", FetTools }
+                { "FETTOOLS", MSP430_TOOLS_FOLDER }
             };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
