@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<ApplicationIcon>icon.ico</ApplicationIcon>
+	<ApplicationIcon>resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="firmware\STMPrograms\" />
-    <Folder Include="resources\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,9 +29,6 @@
 
   <ItemGroup>
     <None Update="Properties\PublishProfiles\ClickOnceProfile.pubxml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\SENSIT-LOGO-Options_WhiteYellow-Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
