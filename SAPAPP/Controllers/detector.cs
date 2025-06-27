@@ -22,7 +22,7 @@ namespace SAPAPP.Controllers
             get { return string.Format("\"{0}\"", _stm32_prog_cli); }
             set { _stm32_prog_cli = value; }
         }
-        public detector() 
+        public detector()
         {
             detectionWorker = new()
             {
@@ -40,7 +40,7 @@ namespace SAPAPP.Controllers
             BackgroundWorker? worker = sender as BackgroundWorker;
 
             bool detected = false, readyToDownload = true;
-            
+
             while (automaic)
             {
                 while (!worker.CancellationPending && running)
@@ -82,7 +82,7 @@ namespace SAPAPP.Controllers
             };
 
             StringBuilder results = new StringBuilder();
-            
+
             cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
             {
                 if (eventArgs.Data != null)
@@ -97,7 +97,7 @@ namespace SAPAPP.Controllers
                     results.AppendLine(eventArgs.Data);
                 }
             });
-            
+
             cmd.Start();
             cmd.BeginOutputReadLine();
             cmd.BeginErrorReadLine();
@@ -107,7 +107,8 @@ namespace SAPAPP.Controllers
             if (results.ToString().Contains("Error: No debug probe detected.") || results.ToString().Contains("Error: No STM32 target found"))
             {
                 return false;
-            } else
+            }
+            else
             {
                 return true;
             }

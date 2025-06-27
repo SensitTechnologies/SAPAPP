@@ -85,7 +85,7 @@ namespace SAPAPP
                     {
                         ProductPartMap[product.ProductName].Add(PartName);
                     }
-                } 
+                }
                 else
                 {
                     ProductPartMap.Add(product.ProductName, PartNames);
@@ -151,7 +151,7 @@ namespace SAPAPP
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         /// <summary>
         /// Notifies users of a change in the property of the selection process
         /// and invokes the PropertyChanged event with a specified property name.

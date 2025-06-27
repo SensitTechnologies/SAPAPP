@@ -2,8 +2,6 @@
 using SAPAPP.Configs;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace SAPAPP.Controllers
 {
@@ -13,12 +11,22 @@ namespace SAPAPP.Controllers
         #region Instance Variables
 
         //scripts
+        private Script[] scripts = [];
         private STMScript STMScript = new();
+        private MegaScript MegaScript = new();
+
+
         public string STM32_Programmer_CLI
         {
             get { return STMScript.STM32_Programmer_CLI; }
-            set { STMScript.STM32_Programmer_CLI = value;}
+            set { STMScript.STM32_Programmer_CLI = value; }
         }
+        public string AVRDUDE_CLI
+        {
+            get { return MegaScript.AVRDUDE_CLI; }
+            set { MegaScript.AVRDUDE_CLI = value; }
+        }
+
 
         // current firmware to flash
         private Part currentDownload = new();
@@ -30,10 +38,10 @@ namespace SAPAPP.Controllers
         private bool Running = false;
 
         // tells whether automatic mode is on or off
-        public bool AutomaticOn {get; } = true;
+        public bool AutomaticOn { get => ScriptHasAutomatic(); }
 
         // Feedback Devices
-        private Logger logger;
+        private Logger logger = new();
         private Action<string> UpdateMessageAction { get; set; } = (message) =>
         {
             Debug.WriteLine(message);
@@ -57,7 +65,7 @@ namespace SAPAPP.Controllers
                 WorkerSupportsCancellation = true
             };
 
-            worker.DoWork += worker_Run;
+            worker.DoWork += Worker_Run;
             worker.RunWorkerAsync();
         }
 
@@ -66,6 +74,9 @@ namespace SAPAPP.Controllers
             logger = lg;
 
             STMScript = new STMScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            MegaScript = new MegaScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+
+            scripts = [STMScript,  MegaScript];
         }
 
         public DownloadController(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : this(logger)
@@ -76,25 +87,55 @@ namespace SAPAPP.Controllers
 
         #endregion
 
+        #region Helper Methods
+
+        private Script ActiveScript()
+        {
+            foreach (Script script in scripts)
+            {
+                if (script.CompatibleArchitecture == currentDownload.Architecture)
+                {
+                    return script;
+                }
+            }
+            return null;
+        }
+
+        private bool ScriptHasAutomatic()
+        {
+            return ActiveScript().GetCapableAutomatic();
+        }
+
+        #endregion
+
+
         #region Run, Search, and Download algorithms
 
-        private void worker_Run(object sender, DoWorkEventArgs e)
+        private void Worker_Run(object? sender, DoWorkEventArgs e)
         {
             BackgroundWorker? worker = sender as BackgroundWorker;
-
-            bool ReadyToDownload = true, detected = false;
+            bool ReadyToDownload = true;
 
             while (true)
             {
                 while (!worker.CancellationPending && Running)
                 {
-                    detected = Detect();
+                    if (!ScriptHasAutomatic())
+                    {
+                        LogNUpdate_Info($"Automatic mode not available for {currentDownload.Architecture}... Starting ");
+                        Download();
+                        LogNUpdate_Info("Download Finished");
+                        Running = false;
+                        break;
+                    }
+
+                    bool detected = Detect();
                     if (detected && ReadyToDownload)
                     {
                         LogNUpdate_Info("New board detected. staring download");
                         Download();
                         LogNUpdate_Info("Download Finished");
-                        
+
                         ReadyToDownload = false;
                     }
                     else if (!(detected || ReadyToDownload))
@@ -103,23 +144,18 @@ namespace SAPAPP.Controllers
                         UpdateProgbarFeedback(0);
                         ReadyToDownload = true;
                     }
-
-                    if (!AutomaticOn)
-                    {
-                        Running = false;
-                    }
                 }
             }
         }
 
         private bool Detect()
         {
-            return STMScript.Detect();
+            return ActiveScript().Detect();
         }
 
         private void Download()
         {
-            STMScript.Download(currentDownload);
+            ActiveScript().Download(currentDownload);
         }
 
         #endregion
@@ -136,7 +172,7 @@ namespace SAPAPP.Controllers
             }
         }
 
-        public void StopRunning() 
+        public void StopRunning()
         {
             LogNUpdate_Info($"Stopping search for Board...");
             Running = false;
@@ -154,7 +190,7 @@ namespace SAPAPP.Controllers
 
         private void UpdateMessageFeedback(string message) => UpdateMessageAction(message);
         private void UpdateProgbarFeedback(int progress) => UpdateProgbarAction(progress);
-        
+
 
         #endregion
     }

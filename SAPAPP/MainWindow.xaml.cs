@@ -1,6 +1,5 @@
 ﻿using SAPAPP.Configs;
 using SAPAPP.Controllers;
-using SAPAPP.Scripts;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -16,14 +15,7 @@ namespace SAPAPP
         #region instanceVariables
 
         private bool _BeyondStartup = true;
-
-        private TestScript TestScript;
-        private FetScript FetScript;
-        private MegaScript MegaScript;
-        private STMScript STMScript;
-
         private DownloadController DownloadController;
-
         private FirmwareConfigs configs = new();
 
         private static string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP_DebugTesting");
@@ -56,7 +48,7 @@ namespace SAPAPP
             set
             {
                 _AVRDUDE_CLI = value;
-                MegaScript.AVRDUDE_CLI = value;
+                DownloadController.AVRDUDE_CLI = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -71,7 +63,6 @@ namespace SAPAPP
             set
             {
                 _STM32_Programmer_CLI = value;
-                STMScript.STM32_Programmer_CLI = value;
                 DownloadController.STM32_Programmer_CLI = value;
                 if (_BeyondStartup)
                 {
@@ -87,7 +78,6 @@ namespace SAPAPP
             set
             {
                 _fetTools = value;
-                FetScript.ToolsFolder = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -153,11 +143,6 @@ namespace SAPAPP
         private void InitializeScripts()
         {
             DownloadController = new DownloadController(logger, UpdateFeedbackMessages, UpdateProgressBar);
-
-            TestScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
-            FetScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
-            MegaScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
-            STMScript = new (logger, StatusMessageDisplay, progressPercentage, progbar);
         }
 
         /// <summary>
@@ -285,32 +270,11 @@ namespace SAPAPP
             Part currentPart = Get_Current_Part(currentProduct);
 
             DownloadController.StartRunning(currentPart);
-            
+
             if (!DownloadController.AutomaticOn)
             {
                 StartButton.IsEnabled = true;
             }
-
-            /*
-            StatusMessageDisplay.Text = "Starting Download";
-
-            Product currentProduct = Get_Current_Product();
-            Part currentPart = Get_Current_Part(currentProduct);
-
-            switch (currentPart.Architecture.ToLower())
-            {
-                //case "---": TestScript.Download(currentPart); break;
-                //case "msp430": FetScript.Download(currentPart); break;
-                case "atmega": MegaScript.Download(currentPart); break;
-                case "stm32": STMScript.Download(currentPart); break;
-                //case "laird": break;
-                //case "fuel gauge": break;
-                default: break;
-
-            }
-
-            StartButton.IsEnabled = true;
-            */
         }
 
         /// <summary>
@@ -330,21 +294,12 @@ namespace SAPAPP
             Product currentProduct = Get_Current_Product();
             Part currentPart = Get_Current_Part(currentProduct);
 
-            //DetectionTester.Cancel();
             DownloadController.StopRunning();
 
-            /*
-            switch (currentPart.Architecture)
+            if (!DownloadController.AutomaticOn)
             {
-                case "---": TestScript.Cancel(); break;
-                case "MSP430": FetScript.Cancel(); break;
-                case "ATmega": MegaScript.Cancel(); break;
-                case "STM32": STMScript.Cancel(); break;
-                default: break;
+                StopButton.IsEnabled = true;
             }
-
-            StatusMessageDisplay.Text = "Download Canceled";
-            */
         }
 
         /// <summary>

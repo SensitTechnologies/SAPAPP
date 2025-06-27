@@ -11,16 +11,25 @@ namespace SAPAPP.AutoScripts
         private string _stm32_prog_cli;
         public string STM32_Programmer_CLI
         {
-            get { return string.Format("\"{0}\"", _stm32_prog_cli); }
+            get { return _stm32_prog_cli; }
             set { _stm32_prog_cli = value; }
         }
 
         #region Constructors
-        public STMScript() : base() { }
+        public STMScript() : base() 
+        {
+            CompatibleArchitecture = Architecture.STM32;
+        }
 
-        public STMScript(Logger logger) : base(logger) { }
+        public STMScript(Logger logger) : base(logger)
+        {
+            CompatibleArchitecture = Architecture.STM32;
+        }
 
-        public STMScript(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction) { }
+        public STMScript(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
+        {
+            CompatibleArchitecture = Architecture.STM32;
+        }
 
         #endregion
 
@@ -28,15 +37,14 @@ namespace SAPAPP.AutoScripts
 
         public override bool Detect()
         {
-            if (!File.Exists(_stm32_prog_cli))
+            if (!File.Exists(STM32_Programmer_CLI))
             {
                 MessageBox.Show("Error: Configure STM32 Cube Programmer before you try to Download");
                 return false;
             }
 
             string connect = "-c port=SWD";
-
-            string strCmdText = STM32_Programmer_CLI + " " + connect;
+            string strCmdText = $"\"{STM32_Programmer_CLI}\" {connect}";
 
             Process cmd = new()
             {
@@ -91,9 +99,9 @@ namespace SAPAPP.AutoScripts
 
             // basic commands
             string connect = "-c port=SWD";                                                 // connect to board command
-            string write = "-w " + currentDownload.FullFirmwarePath() + " " + writeHead;    // write command
+            string write = $"-w {currentDownload.FullFirmwarePath()} {writeHead}";          // write command
 
-            string strCmdText = STM32_Programmer_CLI + " " + connect + " " + write;
+            string strCmdText = $"\"{STM32_Programmer_CLI}\" {connect} {write}";
             string firmwareDir = currentDownload.FirmwareFolder;
 
             Process cmd = new()
@@ -149,7 +157,7 @@ namespace SAPAPP.AutoScripts
 
         #endregion
 
-        #region Feedback callbacks and Filtering
+        #region Feedback Filtering
 
         protected override void HandleError(string line)
         {

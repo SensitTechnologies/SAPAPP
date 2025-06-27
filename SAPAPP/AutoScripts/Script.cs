@@ -6,8 +6,11 @@ namespace SAPAPP.AutoScripts
     internal abstract class Script
     {
 
+        protected bool CapableAutomatic = true; // asume script can do automatic mode. if not modify sript constructors until it's compatible
+        public Architecture CompatibleArchitecture;
+
         protected Logger logger;
-        
+
         private Action<string> UpdateMessageAction { get; set; } = (message) =>
         {
             Debug.WriteLine(message);
@@ -37,6 +40,12 @@ namespace SAPAPP.AutoScripts
         }
 
         #endregion
+        
+        public bool GetCapableAutomatic()
+        {
+            return CapableAutomatic;
+        }
+
 
         #region Search, and Download algorithms
 
