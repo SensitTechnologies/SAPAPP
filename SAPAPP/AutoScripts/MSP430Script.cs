@@ -1,6 +1,7 @@
 ﻿using SAPAPP.Configs;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
 
 namespace SAPAPP.AutoScripts
@@ -20,19 +21,19 @@ namespace SAPAPP.AutoScripts
         public MSP430Script() : base()
         {
             CompatibleArchitecture = Architecture.MSP430;
-            CapableAutomatic = false;
+            //CapableAutomatic = false;
         }
 
         public MSP430Script(Logger logger) : base(logger)
         {
             CompatibleArchitecture = Architecture.MSP430;
-            CapableAutomatic = false;
+            //CapableAutomatic = false;
         }
 
         public MSP430Script(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
         {
             CompatibleArchitecture = Architecture.MSP430;
-            CapableAutomatic = false;
+            //CapableAutomatic = false;
         }
 
         #endregion
@@ -42,13 +43,58 @@ namespace SAPAPP.AutoScripts
 
         public override bool Detect()
         {
-
             if (!Directory.Exists(MSP430ToolsFolder))
             {
                 MessageBox.Show("Error: Configure MSP430 Tools before you try to Download");
             }
 
-            throw new NotImplementedException();
+            string strCmdText = "detect-devices.bat";
+
+            Process cmd = new()
+            {
+                StartInfo = new()
+                {
+                    FileName = "cmd.exe",
+                    UseShellExecute = false,
+                    Arguments = $"/c {strCmdText}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    WorkingDirectory = MSP430ToolsFolder
+                }
+            };
+
+            StringBuilder results = new StringBuilder();
+
+            cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    results.AppendLine(eventArgs.Data);
+                }
+            });
+            cmd.ErrorDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
+            {
+                if (eventArgs.Data != null)
+                {
+                    results.AppendLine(eventArgs.Data);
+                }
+            });
+
+            cmd.Start();
+            cmd.BeginOutputReadLine();
+            cmd.BeginErrorReadLine();
+            cmd.WaitForExit();
+            cmd.Close();
+
+            if (results.ToString().Contains("Error: No device detected") || results.ToString().Contains("Error: no power"))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public override void Download(Part currentDownload)
@@ -59,7 +105,7 @@ namespace SAPAPP.AutoScripts
                 return;
             }
 
-            string strCmdText = $"FetExecutor.bat \"{currentDownload.FullFirmwarePath()}\" \"user_files\\configs\\{currentDownload.Chip}.ccxml\"";
+            string strCmdText = $"FetExecutor.bat \"{currentDownload.FullFirmwarePath()}\" \"{currentDownload.CCXML_Config_File}\"";
 
             Process cmd = new()
             {
@@ -99,7 +145,7 @@ namespace SAPAPP.AutoScripts
             {
                 if (eventArgs.Data != null)
                 {
-                    ProcessOutputData(eventArgs.Data);
+                    HandleError(eventArgs.Data);
                     //e.Result = eventArgs.Data;
                     //logger.Log(eventArgs.Data, Logger.LogType.Error);
                     //HandleError(eventArgs.Data);

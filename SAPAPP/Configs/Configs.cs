@@ -16,7 +16,7 @@ namespace SAPAPP.Configs
     {
         public string PartName { get; set; } = "---";
         public Architecture Architecture { get; set; }
-        public string Chip { get; set; }
+        public string CCXML_Config_File { get; set; }
         public string DriveLocation { get; set; }
         public string ProductFolder { get; set; }
         public string FirmwareFolder { get; set; }
