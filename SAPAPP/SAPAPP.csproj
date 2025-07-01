@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+	<ApplicationIcon>resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,22 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="OIP-removebg-preview.png" />
-    <None Remove="st-hero-min-1024x667.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="DropDown.xaml" />
     <Page Remove="Navigation.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="favicon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="OIP-removebg-preview.png" />
-    <Resource Include="st-hero-min-1024x667.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,9 +29,6 @@
 
   <ItemGroup>
     <None Update="Properties\PublishProfiles\ClickOnceProfile.pubxml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\SENSIT-LOGO-Options_WhiteYellow-Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
