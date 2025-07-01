@@ -149,7 +149,6 @@ namespace SAPAPP
 
             if (openFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show(Path.GetDirectoryName(openFileDialog.FileName));
                 UniflashTextBox.Text = openFileDialog.FileName;
             }
         }

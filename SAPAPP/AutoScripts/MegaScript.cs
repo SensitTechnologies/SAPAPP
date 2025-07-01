@@ -161,10 +161,7 @@ namespace SAPAPP.AutoScripts
 
         private string GetConnection()
         {
-            string fullformat = "-c avrispmkII -p {0} -P {1}";
-            string usbformat = "usb:{0}";
-
-            string strCmdText = $"\"{AVRDUDE_CLI}\" -c avrispmkII -P usb:{"xxx"} -v";
+            string strCmdText = $"\"{AVRDUDE_CLI}\" -c avrispmkII -P usb:xxx -v";
 
             Process cmd = new()
             {

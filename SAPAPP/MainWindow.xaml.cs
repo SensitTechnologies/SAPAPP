@@ -223,7 +223,7 @@ namespace SAPAPP
                 {
                     STM32_PROGRAMMER_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
-                    TI_UNIFLASH_FOLDER = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
+                    TI_UNIFLASH_FOLDER = selection.TryGetValue("UNIFLASH", out string? value3) ? value3 : "";
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
@@ -251,7 +251,7 @@ namespace SAPAPP
             {
                 { "STM32", STM32_PROGRAMMER_CLI },
                 { "AVRDUDE", AVRDUDE_CLI },
-                { "FETTOOLS", TI_UNIFLASH_FOLDER }
+                { "UNIFLASH", TI_UNIFLASH_FOLDER }
             };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
