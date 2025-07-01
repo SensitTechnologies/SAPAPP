@@ -29,14 +29,13 @@ namespace SAPAPP
         /// </summary>
         public Logger logger { get; set; }
 
-        private string _SharePointLocation;
-        public string SharePointLocation
+        public string SoftwareFolderLocation
         {
-            get { return _SharePointLocation; }
+            get => configs.SoftwareFolderLocation;
             set
             {
-                _SharePointLocation = value;
-                configs.DriveLocation = value;
+                configs.SoftwareFolderLocation = value;
+                configs.configureFullPaths();
                 Save_Firmware();
             }
         }
@@ -357,10 +356,9 @@ namespace SAPAPP
         {
             StatusMessageDisplay.Text = "Preferences option selected";
 
-            PreferencesDialog preferencesDialog = new(this)
-            {
-                Owner = this  // Sets MainWindow as the owner
-            };
+            PreferencesDialog preferencesDialog = new(this, 
+                LOGGER_FILE, PRODUCT_CONFIG_FILE, SoftwareFolderLocation, 
+                STM32_PROGRAMMER_CLI, TI_UNIFLASH_FOLDER, AVRDUDE_CLI);
             preferencesDialog.ShowDialog();  // Opens it as a modal window
         }
 

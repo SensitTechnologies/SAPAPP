@@ -15,6 +15,13 @@ namespace SAPAPP
     {
         MainWindow parentWindow;
 
+        string log_location = "";
+        string Firmware_Config_Location = "";
+        string Software_Folder_Location = "";
+        string STM32_Location = "";
+        string Uniflash_Location = "" ;
+        string AVRDUDE_Location = "";
+
         /// <summary>
         /// Represents a dialog window that can be useful
         /// for managing different user preferences and
@@ -31,6 +38,32 @@ namespace SAPAPP
             this.parentWindow = parentWindow;
 
         }
+
+        public PreferencesDialog(MainWindow parentWindow, 
+            string log_location, string firmware_config_location, string software_folder_location, string STM32_focation, string uniflash_location, string AVRDUDE_location) 
+            :this(parentWindow)
+        {
+            this.log_location = log_location;
+            this.Firmware_Config_Location = firmware_config_location;
+            this.Software_Folder_Location = software_folder_location;
+            this.STM32_Location = STM32_focation;
+            this.Uniflash_Location = uniflash_location;
+            this.AVRDUDE_Location = AVRDUDE_location;
+
+            ConfigureTextBoxes();
+        }
+
+
+        private void ConfigureTextBoxes()
+        {
+            Log_Location_TextBox.Text = log_location;
+            Firmware_Config_Location_TextBox.Text = Firmware_Config_Location;
+            Software_Folder_Location_TextBox.Text = Software_Folder_Location;
+            STM32_Location_TextBox.Text = STM32_Location;
+            Uniflash_Location_TextBox.Text = Uniflash_Location;
+            AVRDUDE_Location_TextBox.Text = AVRDUDE_Location;
+        }
+
 
         /// <summary>
         /// Handles the different levels of a click event for browsing
@@ -53,7 +86,7 @@ namespace SAPAPP
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                LogTextBox.Text = openFileDialog.FileName;
+                Log_Location_TextBox.Text = openFileDialog.FileName;
             }
         }
 
@@ -70,31 +103,38 @@ namespace SAPAPP
         /// Whereas this serves as the event data that is associated with a
         /// click.
         /// </summary>
-        private void BrowseConfig_Click(object sender, RoutedEventArgs e)
+        private void BrowseFirmwareConfig_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Config Files (XML-File)|*.xml",
-                Title = "Open Config Settings",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                Title = "Open Firmware Configs",
+                FileName = Firmware_Config_Location_TextBox.Text,
+                InitialDirectory = Firmware_Config_Location_TextBox.Text == "" ? 
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) : 
+                        Path.GetDirectoryName(Firmware_Config_Location_TextBox.Text),
             };
+
             if (openFileDialog.ShowDialog() == true)
             {
-                ConfigTextBox.Text = openFileDialog.FileName;
+                Firmware_Config_Location_TextBox.Text = openFileDialog.FileName;
             }
         }
 
-        private void BrowseSharePoint_Click(object sender, RoutedEventArgs e)
+        private void BrowseSoftwareFolder_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderDialog openFileDialog = new OpenFolderDialog
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog
             {
-                Title = "Select Fet Tools Folder",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                Title = "Select Firmware Folder",
+                FolderName = Software_Folder_Location_TextBox.Text,
+                InitialDirectory = Software_Folder_Location_TextBox.Text == "" ?
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) :
+                        Path.GetDirectoryName(Software_Folder_Location_TextBox.Text),
             };
 
-            if (openFileDialog.ShowDialog() == true)
+            if (openFolderDialog.ShowDialog() == true)
             {
-                SharepointSelectionBox.Text = openFileDialog.FolderName;
+                Software_Folder_Location_TextBox.Text = openFolderDialog.FolderName;
             }
         }
 
@@ -117,12 +157,15 @@ namespace SAPAPP
             {
                 Title = "Select STM32 Programmer (STM32_Programmer_CLI.exe)",
                 Filter = "Executable Files (*.exe)|*.exe",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                FileName = STM32_Location_TextBox.Text,
+                InitialDirectory = STM32_Location_TextBox.Text == "" ?
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) :
+                        Path.GetDirectoryName(STM32_Location_TextBox.Text),
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                STM32PathTextBox.Text = openFileDialog.FileName;
+                STM32_Location_TextBox.Text = openFileDialog.FileName;
             }
         }
 
@@ -139,17 +182,21 @@ namespace SAPAPP
         /// Whereas this serves as the event data that is associated with a
         /// click.
         /// </summary>
-        private void BrowseMSP430_Click(object sender, RoutedEventArgs e)
+        private void BrowseUniflashLocation_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog
             {
-                Title = "Select Uniflash dslite.bat",
-                InitialDirectory = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))
+                Title = "Select Uniflash Install Folder (uniflash_x.x.x)",
+                Multiselect = false,
+                FolderName = Uniflash_Location_TextBox.Text,
+                InitialDirectory = Uniflash_Location_TextBox.Text == "" ?
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) :
+                        Path.GetDirectoryName(Uniflash_Location_TextBox.Text),
             };
 
-            if (openFileDialog.ShowDialog() == true)
+            if (openFolderDialog.ShowDialog() == true)
             {
-                UniflashTextBox.Text = openFileDialog.FileName;
+                Uniflash_Location_TextBox.Text = openFolderDialog.FolderName;
             }
         }
 
@@ -172,12 +219,15 @@ namespace SAPAPP
             {
                 Title = "Select ATmega Programmer (atprogram.exe)",
                 Filter = "Executable Files (*.exe)|*.exe",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                FileName = AVRDUDE_Location_TextBox.Text,
+                InitialDirectory = AVRDUDE_Location_TextBox.Text == "" ?
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) :
+                        Path.GetDirectoryName(AVRDUDE_Location_TextBox.Text),
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                ATmegaPathTextBox.Text = openFileDialog.FileName;
+                AVRDUDE_Location_TextBox.Text = openFileDialog.FileName;
             }
         }
 
@@ -196,27 +246,29 @@ namespace SAPAPP
         {
             this.DialogResult = true;
 
-            if (ConfigTextBox.Text != "")
+            if (Firmware_Config_Location_TextBox.Text != Firmware_Config_Location)
             {
-                parentWindow.Load_Product_Configurations(ConfigTextBox.Text);
-            }
-            if (SharepointSelectionBox.Text != "")
-            {
-                parentWindow.SharePointLocation = SharepointSelectionBox.Text;
-            }
-            if (STM32PathTextBox.Text != "")
-            {
-                parentWindow.STM32_PROGRAMMER_CLI = STM32PathTextBox.Text;
+                parentWindow.Load_Product_Configurations(Firmware_Config_Location_TextBox.Text);
             }
 
-            if (UniflashTextBox.Text != "")
+            if (Software_Folder_Location_TextBox.Text != Software_Folder_Location)
             {
-                parentWindow.TI_UNIFLASH_FOLDER = Path.GetDirectoryName(UniflashTextBox.Text);
+                parentWindow.SoftwareFolderLocation = Software_Folder_Location_TextBox.Text;
             }
-
-            if (ATmegaPathTextBox.Text != "")
+            
+            if (STM32_Location_TextBox.Text != STM32_Location)
             {
-                parentWindow.AVRDUDE_CLI = ATmegaPathTextBox.Text;
+                parentWindow.STM32_PROGRAMMER_CLI = STM32_Location_TextBox.Text;
+            }
+            
+            if (Uniflash_Location_TextBox.Text != Uniflash_Location)
+            {
+                parentWindow.TI_UNIFLASH_FOLDER = Uniflash_Location_TextBox.Text;
+            }
+            
+            if (AVRDUDE_Location_TextBox.Text != AVRDUDE_Location)
+            {
+                parentWindow.AVRDUDE_CLI = AVRDUDE_Location_TextBox.Text;
             }
 
             this.Close();

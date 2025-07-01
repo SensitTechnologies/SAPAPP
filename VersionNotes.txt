@@ -10,6 +10,7 @@ New Features
 Minor Chnages
 	* Modified some of the dialogue related to donwloading to MSP430 microcontrollers
 	* New Desktop Icon
+	* Configure Settings Window now loads with the current configuration file locations and opens to thier folders when browsing
 
 Bug Fixes
 	* Fixed an issue where the program could not load configurations from a read-only xml file

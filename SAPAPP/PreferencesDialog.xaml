@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SAPAPP.PreferencesDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Preferences" Height="500" Width="800"
+        Title="Configure Settings" Height="500" Width="800"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         Background="white">
 
@@ -35,7 +35,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Preferences Title -->
-        <TextBlock Text="Preferences" FontSize="24" FontWeight="Bold" Grid.Row="0" Grid.ColumnSpan="3"
+        <TextBlock Text="Configure Settings" FontSize="24" FontWeight="Bold" Grid.Row="0" Grid.ColumnSpan="3"
             HorizontalAlignment="Left" Margin="0,0,0,10" Foreground="#383838"/>
 
         <!-- Instruction for Software and Configuration File Selection -->
@@ -49,33 +49,33 @@
 
         <!-- Log File Selection -->
         <Label Content="Log File:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="LogTextBox" Grid.Row="2" Grid.Column="1" Margin="5" Height="35"/>
+        <TextBox x:Name="Log_Location_TextBox" Grid.Row="2" Grid.Column="1" Margin="5" Height="35"/>
         <Button Content="Browse Log" Grid.Row="2" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseLog_Click"/>
 
         <!-- Config File Selection -->
         <Label Content="Config File:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="ConfigTextBox" Grid.Row="3" Grid.Column="1" Margin="5" Height="35"/>
-        <Button Content="Browse Config" Grid.Row="3" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseConfig_Click"/>
+        <TextBox x:Name="Firmware_Config_Location_TextBox" Grid.Row="3" Grid.Column="1" Margin="5" Height="35"/>
+        <Button Content="Browse Config" Grid.Row="3" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseFirmwareConfig_Click"/>
 
         <!-- SharePoint Selection -->
         <Label Content="Sharepoint software Folder" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="SharepointSelectionBox" Grid.Row="4" Grid.Column="1" Margin="5" Height="35"/>
-        <Button Content="Browse" Grid.Row="4" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseSharePoint_Click" />
+        <TextBox x:Name="Software_Folder_Location_TextBox" Grid.Row="4" Grid.Column="1" Margin="5" Height="35"/>
+        <Button Content="Browse" Grid.Row="4" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseSoftwareFolder_Click" />
 
         <!-- STM32 Programmer Selection -->
         <Label Content="STM32 CLI executable:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="STM32PathTextBox" Grid.Row="5" Grid.Column="1" Margin="5" Height="35"/>
+        <TextBox x:Name="STM32_Location_TextBox" Grid.Row="5" Grid.Column="1" Margin="5" Height="35"/>
         <Button Content="Browse" Grid.Row="5" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseSTM32_Click"/>
         
         <!-- FET Programmer Selection -->
         <Label Content="Uniflash Batch file:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="UniflashTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Height="35"/>
-        <Button Content="Browse" Grid.Row="6" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseMSP430_Click"/>
+        <TextBox x:Name="Uniflash_Location_TextBox" Grid.Row="6" Grid.Column="1" Margin="5" Height="35"/>
+        <Button Content="Browse" Grid.Row="6" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseUniflashLocation_Click"/>
 
 
         <!-- ATmega Programmer Selection -->
         <Label Content="AVRDUDE Executable:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="ATmegaPathTextBox" Grid.Row="7" Grid.Column="1" Margin="5" Height="35"/>
+        <TextBox x:Name="AVRDUDE_Location_TextBox" Grid.Row="7" Grid.Column="1" Margin="5" Height="35"/>
         <Button Content="Browse" Grid.Row="7" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseATmega_Click"/>
 
         <!-- Action Buttons -->

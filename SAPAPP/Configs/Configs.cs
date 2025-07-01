@@ -17,7 +17,7 @@ namespace SAPAPP.Configs
         public string PartName { get; set; } = "---";
         public Architecture Architecture { get; set; }
         public string CCXML_Config_File { get; set; }
-        public string DriveLocation { get; set; }
+        public string SoftwareFolderLocation { get; set; }
         public string ProductFolder { get; set; }
         public string FirmwareFolder { get; set; }
         public string FirmwareFile { get; set; }
@@ -27,12 +27,12 @@ namespace SAPAPP.Configs
             string path = string.Empty;
             if (string.IsNullOrEmpty(FirmwareFolder))
             {
-                path = Path.Combine(DriveLocation, ProductFolder);
+                path = Path.Combine(SoftwareFolderLocation, ProductFolder);
                 //path = string.Format("{0}\\{1}", DriveLocation, ProductFolder);
             }
             else
             {
-                path = Path.Combine(DriveLocation, ProductFolder, FirmwareFolder);
+                path = Path.Combine(SoftwareFolderLocation, ProductFolder, FirmwareFolder);
                 //path = string.Format("{0}\\{1}\\{2}", DriveLocation, ProductFolder, FirmwareFolder);
             }
             return path;
@@ -56,13 +56,13 @@ namespace SAPAPP.Configs
         public string ProductName { get; set; } = "---";
         public List<Part> Parts { get; set; } = [];
         public string ProductFolder { get; set; }
-        public string DriveLocation { get; set; }
+        public string SoftwareFolderLocation { get; set; }
         public void configureFullPaths()
         {
             foreach (Part part in Parts)
             {
                 part.ProductFolder = ProductFolder;
-                part.DriveLocation = DriveLocation;
+                part.SoftwareFolderLocation = SoftwareFolderLocation;
             }
         }
         public void Sort()
@@ -93,12 +93,12 @@ namespace SAPAPP.Configs
     public class FirmwareConfigs
     {
         public List<Product> Products { get; set; } = [];
-        public string DriveLocation { get; set; }
+        public string SoftwareFolderLocation { get; set; }
         public void configureFullPaths()
         {
             foreach (Product product in Products)
             {
-                product.DriveLocation = DriveLocation;
+                product.SoftwareFolderLocation = SoftwareFolderLocation;
                 product.configureFullPaths();
             }
         }
