@@ -1,6 +1,20 @@
 ﻿Version Notes
 
 -------------------------------------------------------------------------------------------------------------
+Version 1.4.0
+
+New Features
+	* Software now works in an "Automatic mode". when a user clicks the start button, the program will search for a board to download the sleected product to and then download it.
+	* Ability to download firmware to MSP430 microcontrollers
+
+Minor Chnages
+	* Modified some of the dialogue related to donwloading to MSP430 microcontrollers
+	* New Desktop Icon
+
+Bug Fixes
+	* Fixed an issue where the program could not load configurations from a read-only xml file
+
+-------------------------------------------------------------------------------------------------------------
 Version 1.3.1.1 - Big Bug Fixes
 
 Bug Fixes
