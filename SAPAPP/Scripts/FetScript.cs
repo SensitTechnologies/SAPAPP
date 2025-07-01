@@ -25,7 +25,7 @@ namespace SAPAPP.Scripts
 
             string strCmdText = string.Format(
                 "FetExecutor.bat \"{0}\" \"user_files\\configs\\{1}.ccxml\"",
-                currentDownload.FullFirmwarePath(), currentDownload.Chip);
+                currentDownload.FullFirmwarePath(), currentDownload.CCXML_Config_File);
 
             Process cmd = new()
             {

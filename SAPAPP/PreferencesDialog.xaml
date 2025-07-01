@@ -68,9 +68,9 @@
         <Button Content="Browse" Grid.Row="5" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseSTM32_Click"/>
         
         <!-- FET Programmer Selection -->
-        <Label Content="FET Tools Folder:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
-        <TextBox x:Name="FetToolsTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Height="35"/>
-        <Button Content="Browse" Grid.Row="6" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseFet_Click"/>
+        <Label Content="Uniflash Batch file:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Foreground="#383838"/>
+        <TextBox x:Name="UniflashTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Height="35"/>
+        <Button Content="Browse" Grid.Row="6" Grid.Column="2" Margin="5" Padding="8,3" Click="BrowseMSP430_Click"/>
 
 
         <!-- ATmega Programmer Selection -->

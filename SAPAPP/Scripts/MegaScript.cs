@@ -91,7 +91,7 @@ namespace SAPAPP.Scripts
                     RedirectStandardOutput = !testing,
                     RedirectStandardError = !testing,
                     CreateNoWindow = !testing,
-                    WorkingDirectory = currentDownload.FullFirmwarePath()
+                    WorkingDirectory = currentDownload.FullPath()
                 }
             };
 

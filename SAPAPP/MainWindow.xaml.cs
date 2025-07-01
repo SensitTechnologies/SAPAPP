@@ -1,5 +1,5 @@
 ﻿using SAPAPP.Configs;
-using SAPAPP.Scripts;
+using SAPAPP.Controllers;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -15,12 +15,7 @@ namespace SAPAPP
         #region instanceVariables
 
         private bool _BeyondStartup = false;
-
-        private TestScript TestScript;
-        private FetScript FetScript;
-        private MegaScript MegaScript;
-        private STMScript STMScript;
-
+        private DownloadController DownloadController;
         private FirmwareConfigs configs = new();
 
         private static string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP");
@@ -46,14 +41,31 @@ namespace SAPAPP
             }
         }
 
-        private string _AVRDUDE_CLI;
+        /// <summary>
+        /// This field stores and grabs the CLI integration for STM32 Cube Programmer
+        /// </summary>
+        public string STM32_PROGRAMMER_CLI
+        {
+            get => DownloadController.STM32_PROGRAMMER_CLI;
+            set
+            {
+                DownloadController.STM32_PROGRAMMER_CLI = value;
+                if (_BeyondStartup)
+                {
+                    Save_CLIs();
+                }
+            }
+        }
+
+        /// <summary>
+        /// This field stores and grabs the CLI integration for avrdude
+        /// </summary>
         public string AVRDUDE_CLI
         {
-            get => _AVRDUDE_CLI;
+            get => DownloadController.AVRDUDE_CLI;
             set
             {
-                _AVRDUDE_CLI = value;
-                MegaScript.AVRDUDE_CLI = value;
+                DownloadController.AVRDUDE_CLI = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -61,29 +73,15 @@ namespace SAPAPP
             }
         }
 
-        private string _STM32_Programmer_CLI;
-        public string STM32_Programmer_CLI
+        /// <summary>
+        /// This field stores and grabs the CLI integrations folder for TI Uniflash
+        /// </summary>
+        public string TI_UNIFLASH_FOLDER
         {
-            get => _STM32_Programmer_CLI;
+            get => DownloadController.TI_UNIFLASH_FOLDER;
             set
             {
-                _STM32_Programmer_CLI = value;
-                STMScript.STM32_Programmer_CLI = value;
-                if (_BeyondStartup)
-                {
-                    Save_CLIs();
-                }
-            }
-        }
-
-        private string _fetTools;
-        public string FetTools
-        {
-            get => _fetTools;
-            set
-            {
-                _fetTools = value;
-                FetScript.ToolsFolder = value;
+                DownloadController.TI_UNIFLASH_FOLDER = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -107,11 +105,16 @@ namespace SAPAPP
             InitializeScripts();
             ConfigureOnStartup();
             logger.Log("Startup Complete", LogType.Info);
+
+            _BeyondStartup = true;
         }
 
 
         #region Scripts&Configs
 
+        /// <summary>
+        /// Specially configures serializable integrations on app startup. 
+        /// </summary>
         private void ConfigureOnStartup()
         {
 
@@ -148,10 +151,7 @@ namespace SAPAPP
         /// </summary>
         private void InitializeScripts()
         {
-            TestScript = new TestScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            FetScript = new FetScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            MegaScript = new MegaScript(logger, StatusMessageDisplay, progressPercentage, progbar);
-            STMScript = new STMScript(logger, StatusMessageDisplay, progressPercentage, progbar);
+            DownloadController = new DownloadController(logger, UpdateFeedbackMessages, UpdateProgressBar);
         }
 
         /// <summary>
@@ -223,9 +223,9 @@ namespace SAPAPP
                 Dictionary<string, string> selection = Settings.Load_Dictionary_Configs(filename);
                 if (selection != null)
                 {
-                    STM32_Programmer_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
+                    STM32_PROGRAMMER_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
-                    FetTools = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
+                    TI_UNIFLASH_FOLDER = selection.TryGetValue("UNIFLASH", out string? value3) ? value3 : "";
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
@@ -235,6 +235,9 @@ namespace SAPAPP
             }
         }
 
+        /// <summary>
+        /// Saves the current firmware configurations to the xml file
+        /// </summary>
         public void Save_Firmware()
         {
             Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
@@ -248,9 +251,9 @@ namespace SAPAPP
         {
             Dictionary<string, string> selections = new()
             {
-                { "STM32", STM32_Programmer_CLI },
+                { "STM32", STM32_PROGRAMMER_CLI },
                 { "AVRDUDE", AVRDUDE_CLI },
-                { "FETTOOLS", FetTools }
+                { "UNIFLASH", TI_UNIFLASH_FOLDER }
             };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
@@ -270,28 +273,20 @@ namespace SAPAPP
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             StartButton.IsEnabled = false;
+            StopButton.IsEnabled = true;
             SetButtonAppearance(StartButton, Brushes.Green, Brushes.White);
             SetButtonAppearance(StopButton, Brushes.White, Brushes.Black);
             ResetProgressBar();
 
-            StatusMessageDisplay.Text = "Starting Download";
-
             Product currentProduct = Get_Current_Product();
             Part currentPart = Get_Current_Part(currentProduct);
 
-            switch (currentPart.Architecture.ToLower())
+            DownloadController.StartRunning(currentPart);
+
+            if (!DownloadController.AutomaticOn)
             {
-                //case "---": TestScript.Download(currentPart); break;
-                //case "msp430": FetScript.Download(currentPart); break;
-                case "atmega": MegaScript.Download(currentPart); break;
-                case "stm32": STMScript.Download(currentPart); break;
-                //case "laird": break;
-                //case "fuel gauge": break;
-                default: break;
-
+                StartButton.IsEnabled = true;
             }
-
-            StartButton.IsEnabled = true;
         }
 
         /// <summary>
@@ -301,22 +296,22 @@ namespace SAPAPP
         /// <param name="e"></param>
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
+            StartButton.IsEnabled = true;
+            StopButton.IsEnabled = false;
+
             SetButtonAppearance(StartButton, Brushes.White, Brushes.Black);
             SetButtonAppearance(StopButton, Brushes.Red, Brushes.White);
 
 
             Product currentProduct = Get_Current_Product();
             Part currentPart = Get_Current_Part(currentProduct);
-            switch (currentPart.Architecture)
-            {
-                case "---": TestScript.Cancel(); break;
-                case "MSP430": FetScript.Cancel(); break;
-                case "ATmega": MegaScript.Cancel(); break;
-                case "STM32": STMScript.Cancel(); break;
-                default: break;
-            }
 
-            StatusMessageDisplay.Text = "Download Canceled";
+            DownloadController.StopRunning();
+
+            if (!DownloadController.AutomaticOn)
+            {
+                StopButton.IsEnabled = true;
+            }
         }
 
         /// <summary>
@@ -395,11 +390,14 @@ namespace SAPAPP
         /// </summary>
         private void ResetProgressBar()
         {
-            progbar.IsIndeterminate = false;
             progbar.Value = 0;
         }
 
-
+        /// <summary>
+        /// Writes a new log message to the log file
+        /// </summary>
+        /// <param name="message">The massage being written</param>
+        /// <param name="level">The level of a message representing the type of message being logged</param>
         private void Log(string message, LogType level)
         {
 
@@ -440,6 +438,43 @@ namespace SAPAPP
             }
         }
 
+        /// <summary>
+        /// Writes a new message to the Message Display Box inside the Status Bar
+        /// </summary>
+        /// <param name="message">The message to be written</param>
+        private void UpdateFeedbackMessages(string message)
+        {
+            if ((message != null) && (message != ""))
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusMessageDisplay.Text = message;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Changes the progress display on the Status Bar
+        /// </summary>
+        /// <param name="progress">The current progress of an Download Process</param>
+        private void UpdateProgressBar(double progress)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                progbar.Value = progress;
+                progressPercentage.Text = progress.ToString() + '%';
+            });
+        }
+
+        /// <summary>
+        /// Changes the progress display on the Status Bar
+        /// </summary>
+        /// <param name="progress">The current progress of an Download Process</param>
+        private void UpdateProgressBar(int progress)
+        {
+            UpdateProgressBar((double)progress);
+        }
+       
         #endregion
 
 

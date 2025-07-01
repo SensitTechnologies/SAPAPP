@@ -1,36 +1,46 @@
 ﻿using System.Text;
+using Path = System.IO.Path;
 
 
 namespace SAPAPP.Configs
 {
 
+    public enum Architecture
+    {
+        STM32, ATMEGA, MSP430
+    }
+
+
     [Serializable]
     public class Part
     {
         public string PartName { get; set; } = "---";
-        public string Architecture { get; set; } = "---";
-        public string Chip { get; set; }
+        public Architecture Architecture { get; set; }
+        public string CCXML_Config_File { get; set; }
         public string DriveLocation { get; set; }
         public string ProductFolder { get; set; }
         public string FirmwareFolder { get; set; }
         public string FirmwareFile { get; set; }
 
-        private string FullPath()
+        public string FullPath()
         {
             string path = string.Empty;
             if (string.IsNullOrEmpty(FirmwareFolder))
             {
-                path = string.Format("{0}\\{1}", DriveLocation, ProductFolder);
+                path = Path.Combine(DriveLocation, ProductFolder);
+                //path = string.Format("{0}\\{1}", DriveLocation, ProductFolder);
             }
             else
             {
-                path = string.Format("{0}\\{1}\\{2}", DriveLocation, ProductFolder, FirmwareFolder);
+                path = Path.Combine(DriveLocation, ProductFolder, FirmwareFolder);
+                //path = string.Format("{0}\\{1}\\{2}", DriveLocation, ProductFolder, FirmwareFolder);
             }
             return path;
         }
         public string FullFirmwarePath()
         {
-            return string.Format("{0}\\{1}", FullPath(), FirmwareFile);
+            return Path.Combine(FullPath(), FirmwareFile);
+            //return string.Format("{0}\\{1}", FullPath(), FirmwareFile);
         }
         public new string ToString()
         {
@@ -55,7 +65,7 @@ namespace SAPAPP.Configs
                 part.DriveLocation = DriveLocation;
             }
         }
-        public void Sort() 
+        public void Sort()
         {
             Parts.Sort(delegate (Part x, Part y)
             {
@@ -70,7 +80,7 @@ namespace SAPAPP.Configs
             StringBuilder sb = new StringBuilder();
 
             sb.Append(ProductName); sb.Append(": ");
-            foreach(Part part in Parts)
+            foreach (Part part in Parts)
             {
                 sb.Append(part.ToString());
             }
@@ -92,7 +102,7 @@ namespace SAPAPP.Configs
                 product.configureFullPaths();
             }
         }
-        public void Sort() 
+        public void Sort()
         {
 
             foreach (Product product in Products)
@@ -108,15 +118,15 @@ namespace SAPAPP.Configs
                 else return x.ProductName.CompareTo(y.ProductName);
             });
         }
-        public new string ToString() 
-        { 
+        public new string ToString()
+        {
             StringBuilder sb = new StringBuilder();
-            foreach(Product product in Products)
+            foreach (Product product in Products)
             {
                 sb.Append(product.ToString());
                 sb.Append('\n');
             }
-            return sb.ToString(); 
+            return sb.ToString();
         }
     }
 }
