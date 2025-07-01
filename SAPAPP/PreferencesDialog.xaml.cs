@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.IO;
 using System.Windows;
 
 namespace SAPAPP
@@ -75,6 +76,7 @@ namespace SAPAPP
             {
                 Filter = "Config Files (XML-File)|*.xml",
                 Title = "Open Config Settings",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -87,7 +89,7 @@ namespace SAPAPP
             OpenFolderDialog openFileDialog = new OpenFolderDialog
             {
                 Title = "Select Fet Tools Folder",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -137,17 +139,18 @@ namespace SAPAPP
         /// Whereas this serves as the event data that is associated with a
         /// click.
         /// </summary>
-        private void BrowseFet_Click(object sender, RoutedEventArgs e)
+        private void BrowseMSP430_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderDialog openFileDialog = new OpenFolderDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Title = "Select Fet Tools Folder",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                Title = "Select Uniflash dslite.bat",
+                InitialDirectory = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                FetToolsTextBox.Text = openFileDialog.FolderName;
+                MessageBox.Show(Path.GetDirectoryName(openFileDialog.FileName));
+                UniflashTextBox.Text = openFileDialog.FileName;
             }
         }
 
@@ -207,9 +210,9 @@ namespace SAPAPP
                 parentWindow.STM32_PROGRAMMER_CLI = STM32PathTextBox.Text;
             }
 
-            if (FetToolsTextBox.Text != "")
+            if (UniflashTextBox.Text != "")
             {
-                parentWindow.MSP430_TOOLS_FOLDER = FetToolsTextBox.Text;
+                parentWindow.TI_UNIFLASH_FOLDER = Path.GetDirectoryName(UniflashTextBox.Text);
             }
 
             if (ATmegaPathTextBox.Text != "")

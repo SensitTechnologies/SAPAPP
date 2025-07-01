@@ -16,19 +16,22 @@ namespace SAPAPP.AutoScripts
         }
 
         #region Constructors
-        public STMScript() : base() 
+        public STMScript() : base()
         {
             CompatibleArchitecture = Architecture.STM32;
+            //CapableAutomatic = false;
         }
 
         public STMScript(Logger logger) : base(logger)
         {
             CompatibleArchitecture = Architecture.STM32;
+            //CapableAutomatic = false;
         }
 
         public STMScript(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
         {
             CompatibleArchitecture = Architecture.STM32;
+            //CapableAutomatic = false;
         }
 
         #endregion
@@ -52,7 +55,7 @@ namespace SAPAPP.AutoScripts
                 {
                     FileName = "cmd.exe",
                     UseShellExecute = false,
-                    Arguments = "/c" + strCmdText,
+                    Arguments = $"/c {strCmdText}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
@@ -110,7 +113,7 @@ namespace SAPAPP.AutoScripts
                 {
                     FileName = "cmd.exe",
                     UseShellExecute = false,
-                    Arguments = "/c" + strCmdText,
+                    Arguments = $"/c {strCmdText}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,

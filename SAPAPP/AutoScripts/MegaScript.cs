@@ -61,7 +61,7 @@ namespace SAPAPP.AutoScripts
                 {
                     FileName = "cmd.exe",
                     UseShellExecute = false,
-                    Arguments = "/c" + strCmdText,
+                    Arguments = $"/c {strCmdText}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,

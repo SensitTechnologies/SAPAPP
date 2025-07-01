@@ -8,12 +8,15 @@ namespace SAPAPP.AutoScripts
 {
     internal class MSP430Script : Script
     {
+        private string _uniflashfolder;
 
-        private string _msp430toolsfolder;
-        public string MSP430ToolsFolder
+        /// <summary>
+        /// This field stores and grabs the CLI integrations folder for TI Uniflash
+        /// </summary>
+        public string TI_UNIFLASH_FOLDER
         {
-            get { return _msp430toolsfolder; }
-            set { _msp430toolsfolder = value; }
+            get { return _uniflashfolder; }
+            set { _uniflashfolder = value; }
         }
 
         #region Contructors 
@@ -40,10 +43,9 @@ namespace SAPAPP.AutoScripts
 
         #region Search, and Download algorithms
 
-
         public override bool Detect()
         {
-            if (!Directory.Exists(MSP430ToolsFolder))
+            if (!Directory.Exists(TI_UNIFLASH_FOLDER))
             {
                 MessageBox.Show("Error: Configure MSP430 Tools before you try to Download");
             }
@@ -60,7 +62,7 @@ namespace SAPAPP.AutoScripts
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = MSP430ToolsFolder
+                    WorkingDirectory = TI_UNIFLASH_FOLDER
                 }
             };
 
@@ -87,7 +89,11 @@ namespace SAPAPP.AutoScripts
             cmd.WaitForExit();
             cmd.Close();
 
-            if (results.ToString().Contains("Error: No device detected") || results.ToString().Contains("Error: no power"))
+            if (
+                results.ToString().Contains("Error: No device detected") ||
+                results.ToString().Contains("Error: no power") ||
+                results.ToString().Contains("Could not open the device")
+                )
             {
                 return false;
             }
@@ -99,13 +105,13 @@ namespace SAPAPP.AutoScripts
 
         public override void Download(Part currentDownload)
         {
-            if (!Directory.Exists(MSP430ToolsFolder))
+            if (!Directory.Exists(TI_UNIFLASH_FOLDER))
             {
                 MessageBox.Show("Error: Configure MSP430 Tools before you try to Download");
                 return;
             }
 
-            string strCmdText = $"FetExecutor.bat \"{currentDownload.FullFirmwarePath()}\" \"{currentDownload.CCXML_Config_File}\"";
+            string strCmdText = $"dslite.bat -c \"{currentDownload.CCXML_Config_File}\" -s VerifyAfterProgramLoad=\"No verification\" -e -f -v \"{currentDownload.FullFirmwarePath()}\"";
 
             Process cmd = new()
             {
@@ -113,11 +119,11 @@ namespace SAPAPP.AutoScripts
                 {
                     FileName = "cmd.exe",
                     UseShellExecute = false,
-                    Arguments = "/c" + strCmdText,
+                    Arguments = $"/c {strCmdText}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = MSP430ToolsFolder
+                    WorkingDirectory = TI_UNIFLASH_FOLDER
                 }
             };
 
@@ -206,28 +212,17 @@ namespace SAPAPP.AutoScripts
                 progress = int.Parse(words[^1].Trim('%'));
             }
 
-            if (line.Contains("Configuring"))
+
+            if (
+                line.Contains("Configuring") ||
+                line.Contains("Initializing") ||
+                line.Contains("Connecting") ||
+                line.Contains("Loading") ||
+                line.Contains("Verifying")
+                )
             {
                 DisplayMessage = line;
             }
-            else if (line.Contains("Initializing"))
-            {
-                DisplayMessage = line + "...";
-            }
-            else if (line.Contains("Connecting"))
-            {
-                DisplayMessage = line;
-            }
-            /*
-            else if (line.Contains("Loading"))
-            {
-                DisplayMessage = words[0] + ' ' + words[1] + ' ' + currentDownload.FullFirmwarePath();
-            }
-            else if (line.Contains("Verifying"))
-            {
-                DisplayMessage = words[0] + ' ' + words[1] + ' ' + currentDownload.FullFirmwarePath();
-            }
-            */
 
             if (progress > 100)
             {

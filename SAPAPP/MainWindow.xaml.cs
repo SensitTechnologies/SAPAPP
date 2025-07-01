@@ -41,28 +41,14 @@ namespace SAPAPP
             }
         }
 
-        private string _avrdude_cli;
-        public string AVRDUDE_CLI
-        {
-            get => _avrdude_cli;
-            set
-            {
-                _avrdude_cli = value;
-                DownloadController.AVRDUDE_CLI = value;
-                if (_BeyondStartup)
-                {
-                    Save_CLIs();
-                }
-            }
-        }
-
-        private string _stm32_programmer_cli;
+        /// <summary>
+        /// This field stores and grabs the CLI integration for STM32 Cube Programmer
+        /// </summary>
         public string STM32_PROGRAMMER_CLI
         {
-            get => _stm32_programmer_cli;
+            get => DownloadController.STM32_PROGRAMMER_CLI;
             set
             {
-                _stm32_programmer_cli = value;
                 DownloadController.STM32_PROGRAMMER_CLI = value;
                 if (_BeyondStartup)
                 {
@@ -71,14 +57,31 @@ namespace SAPAPP
             }
         }
 
-        private string _msp430_tools_folder;
-        public string MSP430_TOOLS_FOLDER
+        /// <summary>
+        /// This field stores and grabs the CLI integration for avrdude
+        /// </summary>
+        public string AVRDUDE_CLI
         {
-            get => _msp430_tools_folder;
+            get => DownloadController.AVRDUDE_CLI;
             set
             {
-                _msp430_tools_folder = value;
-                DownloadController.MSP430_TOOLS_FOLDER = value;
+                DownloadController.AVRDUDE_CLI = value;
+                if (_BeyondStartup)
+                {
+                    Save_CLIs();
+                }
+            }
+        }
+
+        /// <summary>
+        /// This field stores and grabs the CLI integrations folder for TI Uniflash
+        /// </summary>
+        public string TI_UNIFLASH_FOLDER
+        {
+            get => DownloadController.TI_UNIFLASH_FOLDER;
+            set
+            {
+                DownloadController.TI_UNIFLASH_FOLDER = value;
                 if (_BeyondStartup)
                 {
                     Save_CLIs();
@@ -107,6 +110,9 @@ namespace SAPAPP
 
         #region Scripts&Configs
 
+        /// <summary>
+        /// Specially configures serializable integrations on app startup. 
+        /// </summary>
         private void ConfigureOnStartup()
         {
 
@@ -123,7 +129,7 @@ namespace SAPAPP
             }
 
             // Load pathing configurations for the first time
-            Dictionary<string, string> selections = new Dictionary<string, string>();
+            Dictionary<string, string> selections = [];
             if (!File.Exists(PATH_CONFIG_FILE))
             {
                 Save_CLIs();
@@ -187,7 +193,7 @@ namespace SAPAPP
         /// <summary>
         /// Loads a new list of products and their respective parts from a configuration file in the form of a filename 
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="filename">The XML file that is to be loaded</param>
         public void Load_Product_Configurations(string filename)
         {
             configs = Settings.Open_Firmware_Configs(filename);
@@ -217,7 +223,7 @@ namespace SAPAPP
                 {
                     STM32_PROGRAMMER_CLI = selection.TryGetValue("STM32", out string? value1) ? value1 : "";
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
-                    MSP430_TOOLS_FOLDER = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
+                    TI_UNIFLASH_FOLDER = selection.TryGetValue("FETTOOLS", out string? value3) ? value3 : "";
                 }
                 logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
@@ -227,6 +233,9 @@ namespace SAPAPP
             }
         }
 
+        /// <summary>
+        /// Saves the current firmware configurations to the xml file
+        /// </summary>
         public void Save_Firmware()
         {
             Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
@@ -242,7 +251,7 @@ namespace SAPAPP
             {
                 { "STM32", STM32_PROGRAMMER_CLI },
                 { "AVRDUDE", AVRDUDE_CLI },
-                { "FETTOOLS", MSP430_TOOLS_FOLDER }
+                { "FETTOOLS", TI_UNIFLASH_FOLDER }
             };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
@@ -382,6 +391,11 @@ namespace SAPAPP
             progbar.Value = 0;
         }
 
+        /// <summary>
+        /// Writes a new log message to the log file
+        /// </summary>
+        /// <param name="message">The massage being written</param>
+        /// <param name="level">The level of a message representing the type of message being logged</param>
         private void Log(string message, LogType level)
         {
 
@@ -422,6 +436,10 @@ namespace SAPAPP
             }
         }
 
+        /// <summary>
+        /// Writes a new message to the Message Display Box inside the Status Bar
+        /// </summary>
+        /// <param name="message">The message to be written</param>
         private void UpdateFeedbackMessages(string message)
         {
             if ((message != null) && (message != ""))
@@ -433,6 +451,10 @@ namespace SAPAPP
             }
         }
 
+        /// <summary>
+        /// Changes the progress display on the Status Bar
+        /// </summary>
+        /// <param name="progress">The current progress of an Download Process</param>
         private void UpdateProgressBar(double progress)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -442,6 +464,10 @@ namespace SAPAPP
             });
         }
 
+        /// <summary>
+        /// Changes the progress display on the Status Bar
+        /// </summary>
+        /// <param name="progress">The current progress of an Download Process</param>
         private void UpdateProgressBar(int progress)
         {
             UpdateProgressBar((double)progress);
