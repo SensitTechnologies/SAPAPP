@@ -1,6 +1,12 @@
 ﻿Version Notes
 
 -------------------------------------------------------------------------------------------------------------
+Version 1.4.0.1
+
+Bug Fixes
+	* Fixed small bug that would erase the software folder location after loading a new xml file
+
+-------------------------------------------------------------------------------------------------------------
 Version 1.4.0
 
 New Features

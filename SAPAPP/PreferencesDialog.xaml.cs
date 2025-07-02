@@ -249,6 +249,7 @@ namespace SAPAPP
             if (Firmware_Config_Location_TextBox.Text != Firmware_Config_Location)
             {
                 parentWindow.Load_Product_Configurations(Firmware_Config_Location_TextBox.Text);
+                parentWindow.SoftwareFolderLocation = Software_Folder_Location_TextBox.Text;
             }
 
             if (Software_Folder_Location_TextBox.Text != Software_Folder_Location)
