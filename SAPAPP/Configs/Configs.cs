@@ -42,6 +42,10 @@ namespace SAPAPP.Configs
             return Path.Combine(FullPath(), FirmwareFile);
             //return string.Format("{0}\\{1}", FullPath(), FirmwareFile);
         }
+        public string FullCCXMLPath()
+        {
+            return Path.Combine(FullPath(), CCXML_Config_File);
+        }
         public new string ToString()
         {
             StringBuilder sb = new StringBuilder();

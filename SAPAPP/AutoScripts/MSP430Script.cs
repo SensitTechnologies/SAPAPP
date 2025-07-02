@@ -111,7 +111,7 @@ namespace SAPAPP.AutoScripts
                 return;
             }
 
-            string strCmdText = $"dslite.bat -c \"{currentDownload.CCXML_Config_File}\" -s VerifyAfterProgramLoad=\"No verification\" -e -f -v \"{currentDownload.FullFirmwarePath()}\"";
+            string strCmdText = $"dslite.bat -c \"{currentDownload.FullCCXMLPath()}\" -s VerifyAfterProgramLoad=\"No verification\" -e -f -v \"{currentDownload.FullFirmwarePath()}\"";
 
             Process cmd = new()
             {
