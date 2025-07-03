@@ -1,12 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <FirmwareConfigs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<PCBs>
-		<PCB><PCBName>---</PCBName><Products/></PCB>
-		<PCB>
-			<PCBName>PCB Some Products Use</PCBName>
-			<Products>
-				<ProductConfig><ProductName>Some Product</ProductName><FirmwareFolderPath>Path to Firmware</FirmwareFolderPath></ProductConfig>
-			</Products>
-		</PCB>
-	</PCBs>
+	<SoftwareFolderLocation>Path/To/Some/Folder/Where/all/firmwares/reside</SoftwareFolderLocation>
+	<Products>
+		<!-- Some Product that needs firmware -->
+		<Product>
+			<ProductName>Some Product</ProductName>
+			<ProductFolder>Optional/folder/for/this/product</ProductFolder>
+			<Parts>
+				<Part>
+					<PartName>Some Part That Needs Firmware</PartName>
+					<Architecture>Specific architecture of the download (STM32, ATMEGA, MSP430, FUELGAUGE)</Architecture>
+					<FirmwareFolder>Optional for multiple folders in Product Folder</FirmwareFolder>
+					<CCXML_Config_File>(required for MSP430) some ccxml file in folder path</CCXML_Config_File>
+					<FirmwareFile>Name of the firmware file in the folder being downloaded</FirmwareFile>
+				</Part>
+				<Part>
+					<PartName>Another Part That Needs Firmware</PartName>
+					<Architecture>Specific architecture of the download (STM32, ATMEGA, MSP430, FUELGAUGE)</Architecture>
+					<FirmwareFolder>Optional for multiple folders in Product Folder</FirmwareFolder>
+					<CCXML_Config_File>(required for MSP430) some ccxml file in folder path</CCXML_Config_File>
+					<FirmwareFile>Name of the firmware file in the folder being downloaded</FirmwareFile>
+				</Part>
+			</Parts>
+		</Product>
+		<!-- Another product that needs firmware -->
+		<Product>
+			<ProductName>Another Product</ProductName>
+			<ProductFolder>Optional/folder/for/this/product</ProductFolder>
+			<Parts>
+				<!-- Fill out the parts list again-->
+			</Parts>
+		</Product>		
+	</Products>
 </FirmwareConfigs>

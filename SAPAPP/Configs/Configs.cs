@@ -16,10 +16,10 @@ namespace SAPAPP.Configs
     {
         public string PartName { get; set; } = "---";
         public Architecture Architecture { get; set; }
-        public string CCXML_Config_File { get; set; }
         public string SoftwareFolderLocation { get; set; }
         public string ProductFolder { get; set; }
         public string FirmwareFolder { get; set; }
+        public string CCXML_Config_File { get; set; }
         public string FirmwareFile { get; set; }
 
         public string FullPath()
@@ -28,27 +28,27 @@ namespace SAPAPP.Configs
             if (string.IsNullOrEmpty(FirmwareFolder))
             {
                 path = Path.Combine(SoftwareFolderLocation, ProductFolder);
-                //path = string.Format("{0}\\{1}", DriveLocation, ProductFolder);
             }
             else
             {
                 path = Path.Combine(SoftwareFolderLocation, ProductFolder, FirmwareFolder);
-                //path = string.Format("{0}\\{1}\\{2}", DriveLocation, ProductFolder, FirmwareFolder);
             }
             return path;
         }
+
         public string FullFirmwarePath()
         {
             return Path.Combine(FullPath(), FirmwareFile);
-            //return string.Format("{0}\\{1}", FullPath(), FirmwareFile);
         }
+
         public string FullCCXMLPath()
         {
             return Path.Combine(FullPath(), CCXML_Config_File);
         }
+
         public new string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(PartName);
             return sb.ToString();
         }
@@ -58,9 +58,9 @@ namespace SAPAPP.Configs
     public class Product
     {
         public string ProductName { get; set; } = "---";
-        public List<Part> Parts { get; set; } = [];
-        public string ProductFolder { get; set; }
         public string SoftwareFolderLocation { get; set; }
+        public string ProductFolder { get; set; }
+        public List<Part> Parts { get; set; } = [];
         public void configureFullPaths()
         {
             foreach (Part part in Parts)
@@ -69,6 +69,7 @@ namespace SAPAPP.Configs
                 part.SoftwareFolderLocation = SoftwareFolderLocation;
             }
         }
+
         public void Sort()
         {
             Parts.Sort(delegate (Part x, Part y)
@@ -79,9 +80,10 @@ namespace SAPAPP.Configs
                 else return x.PartName.CompareTo(y.PartName);
             });
         }
+
         public new string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.Append(ProductName); sb.Append(": ");
             foreach (Part part in Parts)
@@ -96,8 +98,8 @@ namespace SAPAPP.Configs
     [Serializable]
     public class FirmwareConfigs
     {
-        public List<Product> Products { get; set; } = [];
         public string SoftwareFolderLocation { get; set; }
+        public List<Product> Products { get; set; } = [];
         public void configureFullPaths()
         {
             foreach (Product product in Products)
@@ -106,6 +108,7 @@ namespace SAPAPP.Configs
                 product.configureFullPaths();
             }
         }
+
         public void Sort()
         {
 
@@ -122,9 +125,10 @@ namespace SAPAPP.Configs
                 else return x.ProductName.CompareTo(y.ProductName);
             });
         }
+
         public new string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (Product product in Products)
             {
                 sb.Append(product.ToString());

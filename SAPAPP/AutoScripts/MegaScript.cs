@@ -11,8 +11,7 @@ namespace SAPAPP.AutoScripts
         private string _avrdudeCLI;
         public string AVRDUDE_CLI
         {
-            get { return _avrdudeCLI; }
-            set { _avrdudeCLI = value; }
+            get => _avrdudeCLI; set => _avrdudeCLI = value;
         }
 
         private string boardType = "m2560";
@@ -68,7 +67,7 @@ namespace SAPAPP.AutoScripts
                 }
             };
 
-            StringBuilder results = new StringBuilder();
+            StringBuilder results = new();
             cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
             {
                 if (eventArgs.Data != null)
@@ -176,7 +175,7 @@ namespace SAPAPP.AutoScripts
                 },
             };
 
-            StringBuilder results = new StringBuilder();
+            StringBuilder results = new();
             cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
             {
                 if (eventArgs.Data != null)

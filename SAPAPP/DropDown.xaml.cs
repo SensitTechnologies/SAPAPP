@@ -58,9 +58,9 @@ namespace SAPAPP
         /// </param>
         public SelectionViewModel(FirmwareConfigs config)
         {
-            ProductsList = new ObservableCollection<string>();
-            PartsList = new ObservableCollection<string>();
-            ProductPartMap = new Dictionary<string, List<string>>();
+            ProductsList = [];
+            PartsList = [];
+            ProductPartMap = [];
 
 
             Product defaultView = new();
@@ -73,7 +73,7 @@ namespace SAPAPP
             foreach (Product product in config.Products)
             {
                 ProductsList.Add(product.ProductName);
-                List<string> PartNames = new List<string>();
+                List<string> PartNames = [];
                 foreach (Part part in product.Parts)
                 {
                     PartNames.Add(part.PartName);
@@ -85,7 +85,7 @@ namespace SAPAPP
                     {
                         ProductPartMap[product.ProductName].Add(PartName);
                     }
-                } 
+                }
                 else
                 {
                     ProductPartMap.Add(product.ProductName, PartNames);
@@ -124,9 +124,11 @@ namespace SAPAPP
         /// </summary>
         private void SaveSelection()
         {
-            Dictionary<string, string> selection = new Dictionary<string, string>();
-            selection.Add("Product", SelectedProduct);
-            selection.Add("Part", SelectedPart);
+            Dictionary<string, string> selection = new()
+            {
+                { "Product", SelectedProduct },
+                { "Part", SelectedPart }
+            };
 
             Settings.Save_Dictionary_Configs(selection, selections_save_File);
         }
@@ -151,7 +153,7 @@ namespace SAPAPP
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         /// <summary>
         /// Notifies users of a change in the property of the selection process
         /// and invokes the PropertyChanged event with a specified property name.

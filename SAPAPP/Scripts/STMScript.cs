@@ -11,8 +11,7 @@ namespace SAPAPP.Scripts
         private string _stm32_prog_cli;
         public string STM32_Programmer_CLI
         {
-            get { return string.Format("\"{0}\"", _stm32_prog_cli); }
-            set { _stm32_prog_cli = value; }
+            get => string.Format("\"{0}\"", _stm32_prog_cli); set => _stm32_prog_cli = value;
         }
 
         public override void Download(Part download)

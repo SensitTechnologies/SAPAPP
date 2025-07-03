@@ -12,8 +12,7 @@ namespace SAPAPP.Scripts
         private string _avrdudeCLI;
         public string AVRDUDE_CLI
         {
-            get { return string.Format("\"{0}\"", _avrdudeCLI); }
-            set { _avrdudeCLI = value; }
+            get => string.Format("\"{0}\"", _avrdudeCLI); set => _avrdudeCLI = value;
         }
 
         private string boardType = "m2560";

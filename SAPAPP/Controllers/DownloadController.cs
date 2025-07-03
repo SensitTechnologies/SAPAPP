@@ -21,8 +21,7 @@ namespace SAPAPP.Controllers
         /// </summary>
         public string STM32_PROGRAMMER_CLI
         {
-            get { return STMScript.STM32_Programmer_CLI; }
-            set { STMScript.STM32_Programmer_CLI = value; }
+            get => STMScript.STM32_Programmer_CLI; set => STMScript.STM32_Programmer_CLI = value;
         }
 
         /// <summary>
@@ -30,8 +29,7 @@ namespace SAPAPP.Controllers
         /// </summary>
         public string AVRDUDE_CLI
         {
-            get { return MegaScript.AVRDUDE_CLI; }
-            set { MegaScript.AVRDUDE_CLI = value; }
+            get => MegaScript.AVRDUDE_CLI; set => MegaScript.AVRDUDE_CLI = value;
         }
 
         /// <summary>
@@ -39,8 +37,7 @@ namespace SAPAPP.Controllers
         /// </summary>
         public string TI_UNIFLASH_FOLDER
         {
-            get { return MSPScript.TI_UNIFLASH_FOLDER; }
-            set { MSPScript.TI_UNIFLASH_FOLDER = value; }
+            get => MSPScript.TI_UNIFLASH_FOLDER; set => MSPScript.TI_UNIFLASH_FOLDER = value;
         }
 
         // current firmware to flash
@@ -53,7 +50,7 @@ namespace SAPAPP.Controllers
         private bool Running = false;
 
         // tells whether automatic mode is on or off
-        public bool AutomaticOn { get => ScriptHasAutomatic(); }
+        public bool AutomaticOn => ScriptHasAutomatic();
 
         // Feedback Devices
         private Logger logger = new();
@@ -179,12 +176,18 @@ namespace SAPAPP.Controllers
         /// Detects if a microcontroller compatible with the current script is connected to the computer
         /// </summary>
         /// <returns>Whether a board has been detected for the active script</returns>
-        private bool Detect() => ActiveScript().Detect();
+        private bool Detect()
+        {
+            return ActiveScript().Detect();
+        }
 
         /// <summary>
         /// Downloads the current firmware configuration
         /// </summary>
-        private void Download() => ActiveScript().Download(currentDownload);
+        private void Download()
+        {
+            ActiveScript().Download(currentDownload);
+        }
 
         #endregion
 
@@ -231,13 +234,19 @@ namespace SAPAPP.Controllers
         /// Writes a new message to the Message Display Box inside the Status Bar
         /// </summary>
         /// <param name="message">The message to be written</param>
-        private void UpdateMessageFeedback(string message) => UpdateMessageAction(message);
+        private void UpdateMessageFeedback(string message)
+        {
+            UpdateMessageAction(message);
+        }
 
         /// <summary>
         /// Changes the progress display on the Status Bar
         /// </summary>
         /// <param name="progress">The current progress of an Download Process</param>
-        private void UpdateProgbarFeedback(int progress) => UpdateProgbarAction(progress);
+        private void UpdateProgbarFeedback(int progress)
+        {
+            UpdateProgbarAction(progress);
+        }
 
         #endregion
     }

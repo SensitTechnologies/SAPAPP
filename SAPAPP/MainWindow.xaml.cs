@@ -130,7 +130,7 @@ namespace SAPAPP
             }
 
             // Load pathing configurations for the first time
-            Dictionary<string, string> selections = new Dictionary<string, string>();
+            Dictionary<string, string> selections = [];
             if (!File.Exists(PATH_CONFIG_FILE))
             {
                 Save_CLIs();
@@ -200,7 +200,7 @@ namespace SAPAPP
             configs = Settings.Open_Firmware_Configs(filename);
             logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
 
-            SelectionViewModel newContext = new SelectionViewModel(configs);
+            SelectionViewModel newContext = new(configs);
             if (filename != PRODUCT_CONFIG_FILE)
             {
                 Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
@@ -356,8 +356,8 @@ namespace SAPAPP
         {
             StatusMessageDisplay.Text = "Preferences option selected";
 
-            PreferencesDialog preferencesDialog = new(this, 
-                LOGGER_FILE, PRODUCT_CONFIG_FILE, SoftwareFolderLocation, 
+            PreferencesDialog preferencesDialog = new(this,
+                LOGGER_FILE, PRODUCT_CONFIG_FILE, SoftwareFolderLocation,
                 STM32_PROGRAMMER_CLI, TI_UNIFLASH_FOLDER, AVRDUDE_CLI);
             preferencesDialog.ShowDialog();  // Opens it as a modal window
         }
@@ -429,11 +429,9 @@ namespace SAPAPP
             }
 
             string format = "{0} {1} {2}";
-            using (StreamWriter outputFile = new StreamWriter(LOGGER_FILE, true))
-            {
-                outputFile.WriteLine(string.Format(format, time, info, message));
-                outputFile.Close();
-            }
+            using StreamWriter outputFile = new(LOGGER_FILE, true);
+            outputFile.WriteLine(string.Format(format, time, info, message));
+            outputFile.Close();
         }
 
         /// <summary>
@@ -472,7 +470,7 @@ namespace SAPAPP
         {
             UpdateProgressBar((double)progress);
         }
-       
+
         #endregion
 
 

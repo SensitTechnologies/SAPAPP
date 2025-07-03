@@ -15,8 +15,7 @@ namespace SAPAPP.AutoScripts
         /// </summary>
         public string TI_UNIFLASH_FOLDER
         {
-            get { return _uniflashfolder; }
-            set { _uniflashfolder = value; }
+            get => _uniflashfolder; set => _uniflashfolder = value;
         }
 
         #region Contructors 
@@ -66,7 +65,7 @@ namespace SAPAPP.AutoScripts
                 }
             };
 
-            StringBuilder results = new StringBuilder();
+            StringBuilder results = new();
 
             cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
             {

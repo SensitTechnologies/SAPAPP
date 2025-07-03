@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace SAPAPP
 {
-    
+
     /// <summary>
     /// A generic class used to serialize objects to and from json and xml files.
     /// </summary>

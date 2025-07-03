@@ -11,8 +11,7 @@ namespace SAPAPP.AutoScripts
         private string _stm32_prog_cli;
         public string STM32_Programmer_CLI
         {
-            get { return _stm32_prog_cli; }
-            set { _stm32_prog_cli = value; }
+            get => _stm32_prog_cli; set => _stm32_prog_cli = value;
         }
 
         #region Constructors
@@ -62,7 +61,7 @@ namespace SAPAPP.AutoScripts
                 }
             };
 
-            StringBuilder results = new StringBuilder();
+            StringBuilder results = new();
 
             cmd.OutputDataReceived += new DataReceivedEventHandler((sender, eventArgs) =>
             {

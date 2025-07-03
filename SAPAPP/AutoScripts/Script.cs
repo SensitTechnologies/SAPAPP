@@ -44,7 +44,10 @@ namespace SAPAPP.AutoScripts
         /// Tells whether a script is capable of being run in automatic mode
         /// </summary>
         /// <returns>A bool representing if the script is capable of being run in automatic mode</returns>
-        public bool GetCapableAutomatic() => CapableAutomatic;
+        public bool GetCapableAutomatic()
+        {
+            return CapableAutomatic;
+        }
 
         #region Search, and Download algorithms
 
@@ -67,13 +70,19 @@ namespace SAPAPP.AutoScripts
         /// Writes a new message to the Message Display Box inside the Status Bar
         /// </summary>
         /// <param name="message">The message to be written</param>
-        public void UpdateMessageFeedback(string message) => UpdateMessageAction(message);
+        public void UpdateMessageFeedback(string message)
+        {
+            UpdateMessageAction(message);
+        }
 
         /// <summary>
         /// Changes the progress display on the Status Bar
         /// </summary>
         /// <param name="progress">The current progress of an Download Process</param>
-        public void UpdateProgbarFeedback(int progress) => UpdateProgbarAction(progress);
+        public void UpdateProgbarFeedback(int progress)
+        {
+            UpdateProgbarAction(progress);
+        }
 
         /// <summary>
         /// Handles error cases by showing them to the user in ways they c

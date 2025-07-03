@@ -9,8 +9,8 @@ namespace SAPAPP
 {
     public partial class WikiDialog : Window
     {
-        private Stack<string> navigationHistory = new Stack<string>();
-        private Stack<string> forwardHistory = new Stack<string>();
+        private Stack<string> navigationHistory = new();
+        private Stack<string> forwardHistory = new();
 
         public WikiDialog()
         {
@@ -153,7 +153,7 @@ namespace SAPAPP
         {
             if (string.IsNullOrEmpty(searchText)) return;
 
-            TextRange documentRange = new TextRange(WikiContent.Document.ContentStart, WikiContent.Document.ContentEnd);
+            TextRange documentRange = new(WikiContent.Document.ContentStart, WikiContent.Document.ContentEnd);
             documentRange.ClearAllProperties(); // Remove previous highlights
 
             TextPointer start = WikiContent.Document.ContentStart;
@@ -170,7 +170,7 @@ namespace SAPAPP
                         TextPointer highlightStart = start.GetPositionAtOffset(index);
                         TextPointer highlightEnd = highlightStart.GetPositionAtOffset(searchText.Length);
 
-                        TextRange highlightRange = new TextRange(highlightStart, highlightEnd);
+                        TextRange highlightRange = new(highlightStart, highlightEnd);
                         highlightRange.ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Yellow);
                     }
                 }

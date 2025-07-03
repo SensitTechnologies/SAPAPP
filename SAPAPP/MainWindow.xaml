@@ -128,15 +128,15 @@
         </Grid>
 
         <!-- Status Bar -->
-        <StatusBar Name="sbar" Grid.Row="2" Background="#383838" Foreground="White" Height="30">
+        <StatusBar Name="sbar" Grid.Row="2" Background="#383838" Foreground="White" Height="48">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <ProgressBar x:Name="progbar" Width="100" Height="20"/>
-                    <TextBlock x:Name="progressPercentage" Margin="10,0,0,0" VerticalAlignment="Center" Text="0%"/>
+                    <ProgressBar x:Name="progbar" Width="100" Height="24"/>
+                    <TextBlock x:Name="progressPercentage" FontSize="18" Margin="10,0,0,0" VerticalAlignment="Center" Text="0%"/>
                 </StackPanel>
             </StatusBarItem>
             <Separator/>
-            <TextBlock x:Name="StatusMessageDisplay"><Run Text="Ready to download"/></TextBlock>
+            <TextBlock x:Name="StatusMessageDisplay" FontSize="18"><Run Text="Ready to download"/></TextBlock>
         </StatusBar>
     </Grid>
 </Window>

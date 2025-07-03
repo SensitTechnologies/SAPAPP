@@ -19,7 +19,7 @@ namespace SAPAPP
         string Firmware_Config_Location = "";
         string Software_Folder_Location = "";
         string STM32_Location = "";
-        string Uniflash_Location = "" ;
+        string Uniflash_Location = "";
         string AVRDUDE_Location = "";
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace SAPAPP
 
         }
 
-        public PreferencesDialog(MainWindow parentWindow, 
-            string log_location, string firmware_config_location, string software_folder_location, string STM32_focation, string uniflash_location, string AVRDUDE_location) 
-            :this(parentWindow)
+        public PreferencesDialog(MainWindow parentWindow,
+            string log_location, string firmware_config_location, string software_folder_location, string STM32_focation, string uniflash_location, string AVRDUDE_location)
+            : this(parentWindow)
         {
             this.log_location = log_location;
             this.Firmware_Config_Location = firmware_config_location;
@@ -80,7 +80,7 @@ namespace SAPAPP
         /// </summary>
         private void BrowseLog_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Filter = "Log Files (*.txt)|*.txt"
             };
@@ -105,13 +105,13 @@ namespace SAPAPP
         /// </summary>
         private void BrowseFirmwareConfig_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Filter = "Config Files (XML-File)|*.xml",
                 Title = "Open Firmware Configs",
                 FileName = Firmware_Config_Location_TextBox.Text,
-                InitialDirectory = Firmware_Config_Location_TextBox.Text == "" ? 
-                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) : 
+                InitialDirectory = Firmware_Config_Location_TextBox.Text == "" ?
+                        Environment.GetFolderPath(Environment.SpecialFolder.Recent) :
                         Path.GetDirectoryName(Firmware_Config_Location_TextBox.Text),
             };
 
@@ -123,7 +123,7 @@ namespace SAPAPP
 
         private void BrowseSoftwareFolder_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderDialog openFolderDialog = new OpenFolderDialog
+            OpenFolderDialog openFolderDialog = new()
             {
                 Title = "Select Firmware Folder",
                 FolderName = Software_Folder_Location_TextBox.Text,
@@ -153,7 +153,7 @@ namespace SAPAPP
         /// </summary>
         private void BrowseSTM32_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Title = "Select STM32 Programmer (STM32_Programmer_CLI.exe)",
                 Filter = "Executable Files (*.exe)|*.exe",
@@ -184,7 +184,7 @@ namespace SAPAPP
         /// </summary>
         private void BrowseUniflashLocation_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderDialog openFolderDialog = new OpenFolderDialog
+            OpenFolderDialog openFolderDialog = new()
             {
                 Title = "Select Uniflash Install Folder (uniflash_x.x.x)",
                 Multiselect = false,
@@ -215,7 +215,7 @@ namespace SAPAPP
         /// </summary>
         private void BrowseATmega_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Title = "Select ATmega Programmer (atprogram.exe)",
                 Filter = "Executable Files (*.exe)|*.exe",
@@ -249,24 +249,23 @@ namespace SAPAPP
             if (Firmware_Config_Location_TextBox.Text != Firmware_Config_Location)
             {
                 parentWindow.Load_Product_Configurations(Firmware_Config_Location_TextBox.Text);
-                parentWindow.SoftwareFolderLocation = Software_Folder_Location_TextBox.Text;
             }
 
             if (Software_Folder_Location_TextBox.Text != Software_Folder_Location)
             {
                 parentWindow.SoftwareFolderLocation = Software_Folder_Location_TextBox.Text;
             }
-            
+
             if (STM32_Location_TextBox.Text != STM32_Location)
             {
                 parentWindow.STM32_PROGRAMMER_CLI = STM32_Location_TextBox.Text;
             }
-            
+
             if (Uniflash_Location_TextBox.Text != Uniflash_Location)
             {
                 parentWindow.TI_UNIFLASH_FOLDER = Uniflash_Location_TextBox.Text;
             }
-            
+
             if (AVRDUDE_Location_TextBox.Text != AVRDUDE_Location)
             {
                 parentWindow.AVRDUDE_CLI = AVRDUDE_Location_TextBox.Text;
