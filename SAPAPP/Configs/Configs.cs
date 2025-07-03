@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
+using System.Windows.Controls;
 using Path = System.IO.Path;
 
 
@@ -98,8 +100,20 @@ namespace SAPAPP.Configs
     [Serializable]
     public class FirmwareConfigs
     {
-        public string SoftwareFolderLocation { get; set; }
-        public List<Product> Products { get; set; } = [];
+        public string SoftwareFolderLocation
+        {
+            get
+            {
+                return field;
+            } 
+            set
+            {
+                field = value;
+                configureFullPaths();
+            }
+        }
+
+        public List<Product> Products { get; set; }
         public void configureFullPaths()
         {
             foreach (Product product in Products)

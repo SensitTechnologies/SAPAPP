@@ -33,7 +33,6 @@ namespace SAPAPP
             }
 
             configs.Sort();
-            configs.configureFullPaths();
             return configs;
         }
 
