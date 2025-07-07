@@ -7,7 +7,7 @@ namespace SAPAPP.Configs
 
     public enum Architecture
     {
-        STM32, ATMEGA, MSP430
+        STM32, ATMEGA, MSP430, FUELGAUGE
     }
 
 

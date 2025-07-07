@@ -15,6 +15,7 @@ namespace SAPAPP.Controllers
         private STMScript STMScript = new();
         private MegaScript MegaScript = new();
         private MSP430Script MSPScript = new();
+        private FuelGaugeScript FuelGaugeScript = new();
 
         /// <summary>
         /// This field stores and grabs the CLI integration for STM32 Cube Programmer
@@ -91,8 +92,9 @@ namespace SAPAPP.Controllers
             STMScript = new STMScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
             MegaScript = new MegaScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
             MSPScript = new MSP430Script(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            FuelGaugeScript = new FuelGaugeScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
 
-            scripts = [STMScript, MegaScript, MSPScript];
+            scripts = [STMScript, MegaScript, MSPScript, FuelGaugeScript];
         }
 
         public DownloadController(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : this(logger)
