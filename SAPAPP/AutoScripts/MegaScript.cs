@@ -14,7 +14,7 @@ namespace SAPAPP.AutoScripts
             get => _avrdudeCLI; set => _avrdudeCLI = value;
         }
 
-        private string boardType = "m2560";
+        private readonly string boardType = "m2560";
 
 
         #region Constructors

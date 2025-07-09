@@ -11,10 +11,10 @@ namespace SAPAPP.Controllers
         #region Instance Variables
 
         //scripts
-        private Script[] scripts = [];
-        private STMScript STMScript = new();
-        private MegaScript MegaScript = new();
-        private MSP430Script MSPScript = new();
+        private readonly Script[] scripts = [];
+        private readonly STMScript STMScript = new();
+        private readonly MegaScript MegaScript = new();
+        private readonly MSP430Script MSPScript = new();
 
         /// <summary>
         /// This field stores and grabs the CLI integration for STM32 Cube Programmer
@@ -44,7 +44,7 @@ namespace SAPAPP.Controllers
         private Part currentDownload = new();
 
         // Asynchronous worker
-        private BackgroundWorker worker;
+        private readonly BackgroundWorker worker;
 
         // signals when to search and download
         private bool Running = false;
@@ -53,7 +53,7 @@ namespace SAPAPP.Controllers
         public bool AutomaticOn => ScriptHasAutomatic();
 
         // Feedback Devices
-        private Logger logger = new();
+        private readonly Logger logger = new();
         private Action<string> UpdateMessageAction { get; set; } = (message) =>
         {
             Debug.WriteLine(message);

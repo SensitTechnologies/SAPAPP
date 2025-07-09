@@ -12,14 +12,14 @@ using System.IO;
 /// changes and persists selections within a JSON file.
 /// </summary>
 
-namespace SAPAPP
+namespace SAPAPP.Controllers
 {
-    public class SelectionViewModel : INotifyPropertyChanged
+    public class DropDownMenuController : INotifyPropertyChanged
     {
         public ObservableCollection<string> ProductsList { get; set; }
         public ObservableCollection<string> PartsList { get; set; }
         public Dictionary<string, List<string>> ProductPartMap { get; set; }
-        private static string selections_save_File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP", "selection.json");
+        private static readonly string selections_save_File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP", "selection.json");
 
         private string _selectedProduct;
         public string SelectedProduct
@@ -47,7 +47,7 @@ namespace SAPAPP
         }
 
         /// <summary>
-        /// Initializations of new instances of the SelectionViewModel
+        /// Initializations of new instances of the DropDownMenuController
         /// class, and in setting up both product and part lists based on
         /// the instances of provided firmware configurations through
         /// ensuring a default selection. 
@@ -56,7 +56,7 @@ namespace SAPAPP
         /// The firmware configuration is conveyed in containing both product
         /// and part details used in the initialization of selections. 
         /// </param>
-        public SelectionViewModel(FirmwareConfigs config)
+        public DropDownMenuController(FirmwareConfigs config)
         {
             ProductsList = [];
             PartsList = [];

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
-using System.Windows.Controls;
+﻿using System.Text;
 using Path = System.IO.Path;
 
 
@@ -102,10 +100,7 @@ namespace SAPAPP.Configs
     {
         public string SoftwareFolderLocation
         {
-            get
-            {
-                return field;
-            } 
+            get => field;
             set
             {
                 field = value;
