@@ -1,13 +1,17 @@
 ﻿<Window x:Class="SAPAPP.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SAPAPP"
+        mc:Ignorable="d"
         Title="SAP APP"
         Height="768" Width="1366"
         WindowState="Maximized"
         ResizeMode="CanResize"
         SizeToContent="Manual"
         SizeChanged="Window_SizeChanged">
-
+    
     <Window.Resources>
         <Style TargetType="MenuItem" x:Key="SubMenuItemStyle">
             <Setter Property="Foreground" Value="Black"/>
@@ -23,13 +27,13 @@
 
         <!-- Overlay -->
         <Border x:Name="OverlayContainer" Visibility="Collapsed"
-                Background="Black" Opacity="0.8" CornerRadius="10" Margin="40">
+            Background="Black" Opacity="0.8" CornerRadius="10" Margin="40">
             <Grid>
                 <TextBlock x:Name="OverlayContent" Foreground="White" FontSize="18"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <Button Content="Close" Width="120" Height="40"
-                        VerticalAlignment="Bottom" HorizontalAlignment="Center"
-                        Click="CloseOverlay_Click"/>
+                    VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                    Click="CloseOverlay_Click"/>
             </Grid>
         </Border>
 
@@ -59,36 +63,36 @@
                 <DockPanel Margin="100,100,0,0" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <Label x:Name="ProductLabel" Content="Product" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="32" FontWeight="Bold" Foreground="#383838"/>
                     <ComboBox x:Name="ProductPicker" 
-                              DockPanel.Dock="Top"
-                              VerticalAlignment="Top"
-                              HorizontalAlignment="Left"
-                              Width="500" Height="40"
-                              ItemsSource="{Binding ProductsList}"
-                              SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
-                              Background="LightGray" Foreground="Black"
-                              BorderBrush="Black" BorderThickness="1"
-                              Cursor="Hand"/>
+                          DockPanel.Dock="Top"
+                          VerticalAlignment="Top"
+                          HorizontalAlignment="Left"
+                          Width="500" Height="40"
+                          ItemsSource="{Binding ProductsList}"
+                          SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                          Background="LightGray" Foreground="Black"
+                          BorderBrush="Black" BorderThickness="1"
+                          Cursor="Hand"/>
                 </DockPanel>
 
                 <!-- Adjusted Part Picker -->
                 <DockPanel Margin="100,250,0,0" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <Label x:Name="PartLabel" Content="Part" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="32" FontWeight="Bold" Foreground="#383838"/>
                     <ComboBox x:Name="PartPicker"
-              DockPanel.Dock="Top"
-              VerticalAlignment="Top"
-              HorizontalAlignment="Left"
-              Width="500" Height="40"
-              ItemsSource="{Binding PartsList}"
-              SelectedItem="{Binding SelectedPart, Mode=TwoWay}"
-              Background="LightGray" Foreground="Black"
-              BorderBrush="Black" BorderThickness="1"
-              Cursor="Hand"/>
+          DockPanel.Dock="Top"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Left"
+          Width="500" Height="40"
+          ItemsSource="{Binding PartsList}"
+          SelectedItem="{Binding SelectedPart, Mode=TwoWay}"
+          Background="LightGray" Foreground="Black"
+          BorderBrush="Black" BorderThickness="1"
+          Cursor="Hand"/>
                 </DockPanel>
                 <!-- Buttons Section -->
                 <DockPanel Canvas.Left="100" Canvas.Top="420">
                     <Button x:Name="StartButton" Width="180" Height="100"
-                            Background="LightGray" Foreground="#383838" BorderBrush="#666" BorderThickness="1"
-                            Cursor="Hand" Click="StartButton_Click" Margin="10">
+                        Background="LightGray" Foreground="#383838" BorderBrush="#666" BorderThickness="1"
+                        Cursor="Hand" Click="StartButton_Click" Margin="10">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="Gray"/>
@@ -106,8 +110,8 @@
                     </Button>
 
                     <Button x:Name="StopButton" Width="180" Height="100"
-                            Background="LightGray" Foreground="#383838" BorderBrush="#666" BorderThickness="1"
-                            Cursor="Hand" Click="StopButton_Click" Margin="10">
+                        Background="LightGray" Foreground="#383838" BorderBrush="#666" BorderThickness="1"
+                        Cursor="Hand" Click="StopButton_Click" Margin="10">
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="Gray"/>

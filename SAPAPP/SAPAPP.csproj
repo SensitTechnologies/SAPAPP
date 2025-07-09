@@ -11,18 +11,6 @@
 	<LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Navigation.xaml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="DropDown.xaml" />
-    <Page Remove="Navigation.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="firmware\STMPrograms\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Ports" Version="9.0.5" />

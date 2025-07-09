@@ -10,6 +10,9 @@ using static SAPAPP.Logger;
 
 namespace SAPAPP
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
         #region instanceVariables
@@ -592,15 +595,5 @@ namespace SAPAPP
         }
 
         #endregion
-    }
-
-    public static class Program
-    {
-        [STAThread]
-        public static void Main()
-        {
-            Application app = new();
-            app.Run(new MainWindow());
-        }
     }
 }
