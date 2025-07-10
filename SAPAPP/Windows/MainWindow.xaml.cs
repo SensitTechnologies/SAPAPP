@@ -1,11 +1,12 @@
 ﻿using SAPAPP.Configs;
 using SAPAPP.Controllers;
+using SAPAPP.Util;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static SAPAPP.Logger;
+using static SAPAPP.Util.Logger;
 
 
 namespace SAPAPP
@@ -30,15 +31,18 @@ namespace SAPAPP
         /// This handles printing informational statements to help for debugging and provide extra
         /// information to the user.
         /// </summary>
-        public Logger logger { get; set; }
+        public Logger Logger { get; set; }
 
+        /// <summary>
+        /// The name of some folder in the ProductFolder path that contains the Part's specific firmware information
+        /// </summary>
         public string SoftwareFolderLocation
         {
             get => configs.SoftwareFolderLocation;
             set
             {
                 configs.SoftwareFolderLocation = value;
-                configs.configureFullPaths();
+                configs.ConfigureFullPaths();
                 Save_Firmware();
             }
         }
@@ -94,19 +98,23 @@ namespace SAPAPP
 
         #endregion
 
+        /// <summary>
+        /// Creates a new instance of the Main application window on app startup
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-            logger = new(Log);
+            Logger = new(Log);
             if (File.Exists(LOGGER_FILE))
             {
-                logger.Log("Launching App", LogType.Info);
-                logger.Log("Initializing Startup", LogType.Info);
+                Logger.Log("Launching App", LogType.Info);
+                Logger.Log("Initializing Startup", LogType.Info);
             }
 
-            InitializeScripts();
+            DownloadController = new DownloadController(Logger, UpdateFeedbackMessages, UpdateProgressBar);
+
             ConfigureOnStartup();
-            logger.Log("Startup Complete", LogType.Info);
+            Logger.Log("Startup Complete", LogType.Info);
 
             _BeyondStartup = true;
         }
@@ -128,12 +136,11 @@ namespace SAPAPP
             if (!File.Exists(LOGGER_FILE))
             {
                 File.Create(LOGGER_FILE);
-                logger.Log("Launching App", LogType.Info);
-                logger.Log("Initializing Startup", LogType.Info);
+                Logger.Log("Launching App", LogType.Info);
+                Logger.Log("Initializing Startup", LogType.Info);
             }
 
             // Load pathing configurations for the first time
-            Dictionary<string, string> selections = [];
             if (!File.Exists(PATH_CONFIG_FILE))
             {
                 Save_CLIs();
@@ -146,14 +153,6 @@ namespace SAPAPP
                 Save_Firmware();
             }
             Load_Product_Configurations(PRODUCT_CONFIG_FILE);
-        }
-
-        /// <summary>
-        /// Initializes all loader scripts
-        /// </summary>
-        private void InitializeScripts()
-        {
-            DownloadController = new DownloadController(logger, UpdateFeedbackMessages, UpdateProgressBar);
         }
 
         /// <summary>
@@ -201,7 +200,7 @@ namespace SAPAPP
         public void Load_Product_Configurations(string filename)
         {
             configs = Settings.Open_Firmware_Configs(filename);
-            logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
+            Logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
 
             DropDownMenuController newContext = new(configs);
             if (filename != PRODUCT_CONFIG_FILE)
@@ -229,7 +228,7 @@ namespace SAPAPP
                     AVRDUDE_CLI = selection.TryGetValue("AVRDUDE", out string? value2) ? value2 : "";
                     TI_UNIFLASH_FOLDER = selection.TryGetValue("UNIFLASH", out string? value3) ? value3 : "";
                 }
-                logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
+                Logger.Log("Loaded Program integration configurations from file: " + filename, LogType.Info);
             }
             if (filename != PATH_CONFIG_FILE)
             {
@@ -243,7 +242,7 @@ namespace SAPAPP
         public void Save_Firmware()
         {
             Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
-            logger.Log("Saved Firmware Configurations to File: " + PRODUCT_CONFIG_FILE, LogType.Info);
+            Logger.Log("Saved Firmware Configurations to File: " + PRODUCT_CONFIG_FILE, LogType.Info);
         }
 
         /// <summary>
@@ -259,7 +258,7 @@ namespace SAPAPP
             };
 
             Settings.Save_Dictionary_Configs(selections, PATH_CONFIG_FILE);
-            logger.Log("Saved Program integration configurations to file: " + PATH_CONFIG_FILE, LogType.Info);
+            Logger.Log("Saved Program integration configurations to file: " + PATH_CONFIG_FILE, LogType.Info);
         }
 
         #endregion
@@ -303,10 +302,6 @@ namespace SAPAPP
 
             SetButtonAppearance(StartButton, Brushes.White, Brushes.Black);
             SetButtonAppearance(StopButton, Brushes.Red, Brushes.White);
-
-
-            Product currentProduct = Get_Current_Product();
-            Part currentPart = Get_Current_Part(currentProduct);
 
             DownloadController.StopRunning();
 
@@ -484,11 +479,12 @@ namespace SAPAPP
         /// Sets the visibility of the overlay container to collapsed
         /// which serves as hiding the overlay altogether. 
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of the event, without the need of a close overlay button
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data associated with clicks on the MainWindow.
-        /// </summary>
+        /// </param>
         private void CloseOverlay_Click(object sender, RoutedEventArgs e)
         {
             OverlayContainer.Visibility = Visibility.Collapsed;
@@ -500,11 +496,12 @@ namespace SAPAPP
         /// The property of the Topmost is flipped, which helps in keeping the
         /// window visible at all times.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// The source of an event without the need for a toggle button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data associated with clicks and other functionality.
-        /// </summary>
+        /// </param>
         private void ToggleStayOnTop_Click(object sender, RoutedEventArgs e)
         {
             this.Topmost = !this.Topmost;
@@ -514,11 +511,12 @@ namespace SAPAPP
         /// Helps in handling the click event for setting the window's font to
         /// small based upon a fixed value. 
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// The source of an event without the need for a toggle button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data associated with clicks and other functionality.
-        /// </summary>
+        /// </param>
         private void FontSizeSmall_Click(object sender, RoutedEventArgs e)
         {
             this.FontSize = 12;
@@ -528,11 +526,12 @@ namespace SAPAPP
         /// Helps in handling the click event for setting the window's font to
         /// medium based upon a fixed value. 
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// The source of an event without the need for a toggle button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data associated with clicks and other functionality.
-        /// </summary>
+        /// </param>
         private void FontSizeMedium_Click(object sender, RoutedEventArgs e)
         {
             this.FontSize = 16;
@@ -542,11 +541,12 @@ namespace SAPAPP
         /// Helps in handling the click event for setting the window's font to
         /// large based upon a fixed value. 
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// The source of an event without the need for a toggle button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data associated with clicks and other functionality.
-        /// </summary>
+        /// </param>
         private void FontSizeLarge_Click(object sender, RoutedEventArgs e)
         {
             this.FontSize = 20;

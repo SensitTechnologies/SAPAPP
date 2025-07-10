@@ -1,6 +1,9 @@
 ﻿namespace SAPAPP.AutoScripts
 {
-    internal class FuelGaugeScript
+    /// <summary>
+    /// Coming soon
+    /// </summary>
+    public class FuelGaugeScript
     {
     }
 }

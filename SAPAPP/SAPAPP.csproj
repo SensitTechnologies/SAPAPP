@@ -9,6 +9,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<ApplicationIcon>resources\icon.ico</ApplicationIcon>
 	<LangVersion>preview</LangVersion>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 

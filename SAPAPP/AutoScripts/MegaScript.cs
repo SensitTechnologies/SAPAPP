@@ -1,4 +1,5 @@
 ﻿using SAPAPP.Configs;
+using SAPAPP.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -6,9 +7,16 @@ using System.Windows;
 
 namespace SAPAPP.AutoScripts
 {
-    internal class MegaScript : Script
+    /// <summary>
+    /// Script that defines the core functionality of a script that can be used on AVR-based microcontrollers for the purpose of this software
+    /// </summary>
+    public class MegaScript : Script
     {
-        private string _avrdudeCLI;
+        private string _avrdudeCLI = "";
+
+        /// <summary>
+        /// This field stores and grabs the CLI integrations AVRDUDE
+        /// </summary>
         public string AVRDUDE_CLI
         {
             get => _avrdudeCLI; set => _avrdudeCLI = value;
@@ -19,18 +27,21 @@ namespace SAPAPP.AutoScripts
 
         #region Constructors
 
+        /// <inheritdoc/>
         public MegaScript() : base()
         {
             CompatibleArchitecture = Architecture.ATMEGA;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public MegaScript(Logger logger) : base(logger)
         {
             CompatibleArchitecture = Architecture.ATMEGA;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public MegaScript(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
         {
             CompatibleArchitecture = Architecture.ATMEGA;
@@ -41,6 +52,7 @@ namespace SAPAPP.AutoScripts
 
         #region Search and Download algorithms
 
+        /// <inheritdoc/>
         public override bool Detect()
         {
             if (!File.Exists(AVRDUDE_CLI))
@@ -99,6 +111,7 @@ namespace SAPAPP.AutoScripts
             }
         }
 
+        /// <inheritdoc/>
         public override void Download(Part currentDownload)
         {
             if (!File.Exists(AVRDUDE_CLI))
@@ -155,7 +168,6 @@ namespace SAPAPP.AutoScripts
 
         #endregion
 
-
         #region Helper methods
 
         private string GetConnection()
@@ -203,7 +215,7 @@ namespace SAPAPP.AutoScripts
             string[] lines = results.ToString().Split("\n");
             foreach (string line in lines)
             {
-                if (line.ToLower().Contains("found"))
+                if (line.Contains("found", StringComparison.CurrentCultureIgnoreCase))
                 {
                     string[] words = line.Split(' ');
                     string serno = words[words.Length - 1];
@@ -217,8 +229,9 @@ namespace SAPAPP.AutoScripts
 
         #endregion
 
-        #region Feedback FIltering
+        #region Feedback Filtering
 
+        /// <inheritdoc/>
         protected override void HandleError(string line)
         {
             line = line.Trim();
@@ -231,11 +244,12 @@ namespace SAPAPP.AutoScripts
             //Cancel();
         }
 
+        /// <inheritdoc/>
         protected override void ProcessOutputData(string data)
         {
             string line = data.Trim();
 
-            logger.Log(line, Logger.LogType.Info);
+            Logger.Log(line, Logger.LogType.Info);
 
             string DisplayMessage = "";
             int progress = -1;

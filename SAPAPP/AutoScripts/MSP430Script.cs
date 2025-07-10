@@ -1,4 +1,5 @@
 ﻿using SAPAPP.Configs;
+using SAPAPP.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -6,9 +7,12 @@ using System.Windows;
 
 namespace SAPAPP.AutoScripts
 {
-    internal class MSP430Script : Script
+    /// <summary>
+    /// Script that defines the core functionality of a script that can be used on MSP430-based microcontrollers for the purpose of this software
+    /// </summary>
+    public class MSP430Script : Script
     {
-        private string _uniflashfolder;
+        private string _uniflashfolder = "";
 
         /// <summary>
         /// This field stores and grabs the CLI integrations folder for TI Uniflash
@@ -20,18 +24,21 @@ namespace SAPAPP.AutoScripts
 
         #region Contructors 
 
+        /// <inheritdoc/>
         public MSP430Script() : base()
         {
             CompatibleArchitecture = Architecture.MSP430;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public MSP430Script(Logger logger) : base(logger)
         {
             CompatibleArchitecture = Architecture.MSP430;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public MSP430Script(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
         {
             CompatibleArchitecture = Architecture.MSP430;
@@ -42,6 +49,7 @@ namespace SAPAPP.AutoScripts
 
         #region Search, and Download algorithms
 
+        /// <inheritdoc/>
         public override bool Detect()
         {
             if (!Directory.Exists(TI_UNIFLASH_FOLDER))
@@ -102,6 +110,7 @@ namespace SAPAPP.AutoScripts
             }
         }
 
+        /// <inheritdoc/>
         public override void Download(Part currentDownload)
         {
             if (!Directory.Exists(TI_UNIFLASH_FOLDER))
@@ -135,12 +144,12 @@ namespace SAPAPP.AutoScripts
                     if (line.Contains("Error:"))
                     {
                         //e.Result = eventArgs.Data;
-                        logger.Log(eventArgs.Data, Logger.LogType.Error);
+                        Logger.Log(eventArgs.Data, Logger.LogType.Error);
                         HandleError(eventArgs.Data);
                     }
                     else
                     {
-                        logger.Log(eventArgs.Data, Logger.LogType.Info);
+                        Logger.Log(eventArgs.Data, Logger.LogType.Info);
                         //UpdateProgress(eventArgs.Data);
                     }
                     */
@@ -152,7 +161,7 @@ namespace SAPAPP.AutoScripts
                 {
                     HandleError(eventArgs.Data);
                     //e.Result = eventArgs.Data;
-                    //logger.Log(eventArgs.Data, Logger.LogType.Error);
+                    //Logger.Log(eventArgs.Data, Logger.LogType.Error);
                     //HandleError(eventArgs.Data);
                 }
             });
@@ -168,6 +177,7 @@ namespace SAPAPP.AutoScripts
 
         #region Feedback Filtering
 
+        /// <inheritdoc/>
         protected override void HandleError(string line)
         {
             line = line.Trim();
@@ -192,10 +202,11 @@ namespace SAPAPP.AutoScripts
             //Cancel();
         }
 
+        /// <inheritdoc/>
         protected override void ProcessOutputData(string data)
         {
             string line = data.Trim();
-            logger.Log(line, Logger.LogType.Info);
+            Logger.Log(line, Logger.LogType.Info);
 
             string DisplayMessage = "";
             int progress = -1;

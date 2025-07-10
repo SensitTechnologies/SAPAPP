@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace SAPAPP
+namespace SAPAPP.Util
 {
 
     /// <summary>
@@ -50,7 +50,7 @@ namespace SAPAPP
         /// Save a serializable object to an XML file.
         /// </summary>
         /// <typeparam name="T">the object's class type</typeparam>
-        /// <param name="obj">the object to be serialized</param>
+        /// <param name="myObject">the object to be serialized</param>
         /// <param name="filename">filename to save the resulting XML as</param>
         public static void SerializeXML<T>(T myObject, string filename)
         {

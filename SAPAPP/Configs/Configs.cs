@@ -5,26 +5,75 @@ using Path = System.IO.Path;
 namespace SAPAPP.Configs
 {
 
+    /// <summary>
+    /// The type of Architecture that some firmware flash uses
+    /// </summary>
     public enum Architecture
     {
-        STM32, ATMEGA, MSP430
+        /// <summary>
+        /// Configure for STM32 based microcontrollers
+        /// </summary>
+        STM32,
+
+        /// <summary>
+        /// Configure for AVR based microcontrollers
+        /// </summary>
+        ATMEGA,
+
+        /// <summary>
+        /// Configure for MSP430 based microcontrollers
+        /// </summary>
+        MSP430
     }
 
-
+    /// <summary>
+    /// A Serializable class representing a configuration for some part that has firmware
+    /// </summary>
     [Serializable]
     public class Part
     {
+        /// <summary>
+        /// The name of some Part that requires firmware
+        /// </summary>
         public string PartName { get; set; } = "---";
-        public Architecture Architecture { get; set; }
-        public string SoftwareFolderLocation { get; set; }
-        public string ProductFolder { get; set; }
-        public string FirmwareFolder { get; set; }
-        public string CCXML_Config_File { get; set; }
-        public string FirmwareFile { get; set; }
 
+        /// <summary>
+        /// The type of Architecture that the Part uses
+        /// </summary>
+        public Architecture Architecture { get; set; }
+
+        /// <summary>
+        /// general location where all firmware configs are stored
+        /// </summary>
+        public string SoftwareFolderLocation { get; set; } = "";
+
+        /// <summary>
+        /// The name of some folder in the SoftwareFolderLocation path that contains the Part's specific ProductFolder
+        /// </summary>
+        public string ProductFolder { get; set; } = "";
+
+        /// <summary>
+        /// The name of some folder in the ProductFolder path that contains the Part's specific firmware information
+        /// </summary>
+        public string FirmwareFolder { get; set; } = "";
+
+        /// <summary>
+        /// File name of a specific ccxml file to be used for an MSP430
+        /// </summary>
+        public string CCXML_Config_File { get; set; } = "";
+
+        /// <summary>
+        /// The name of some file containing firmware information for the product.
+        /// </summary>
+        public string FirmwareFile { get; set; } = "";
+
+        /// <summary>
+        /// Gets the full folder path of a specific part configuration
+        /// </summary>
+        /// <returns>a file path pointing to a folder that contains the part firmware</returns>
         public string FullPath()
         {
-            string path = string.Empty;
+            string path;
             if (string.IsNullOrEmpty(FirmwareFolder))
             {
                 path = Path.Combine(SoftwareFolderLocation, ProductFolder);
@@ -36,16 +85,25 @@ namespace SAPAPP.Configs
             return path;
         }
 
+        /// <summary>
+        /// Gets the full firmware path of a specific part configuration
+        /// </summary>
+        /// <returns>a file path pointing to configured firmware file</returns>
         public string FullFirmwarePath()
         {
             return Path.Combine(FullPath(), FirmwareFile);
         }
 
+        /// <summary>
+        /// Gets the full firmware path of a specific part configuration
+        /// </summary>
+        /// <returns>a file path pointing to configured firmware file</returns>
         public string FullCCXMLPath()
         {
             return Path.Combine(FullPath(), CCXML_Config_File);
         }
 
+        /// <inheritdoc/>
         public new string ToString()
         {
             StringBuilder sb = new();
@@ -54,14 +112,36 @@ namespace SAPAPP.Configs
         }
     }
 
+    /// <summary>
+    /// A Serializable class representing a configuration for some Product that has Parts that have firmware
+    /// </summary>
     [Serializable]
     public class Product
     {
+        /// <summary>
+        /// Name of a given product derived from the deserialized xml file
+        /// </summary>
         public string ProductName { get; set; } = "---";
-        public string SoftwareFolderLocation { get; set; }
-        public string ProductFolder { get; set; }
+
+        /// <summary>
+        /// general location where all firmware configs are stored
+        /// </summary>
+        public string SoftwareFolderLocation { get; set; } = "";
+
+        /// <summary>
+        /// The name of some folder in the SoftwareFolderLocation path that contains the Part's specific ProductFolder
+        /// </summary>
+        public string ProductFolder { get; set; } = "";
+
+        /// <summary>
+        /// The list of different parts of a product that need software
+        /// </summary>
         public List<Part> Parts { get; set; } = [];
-        public void configureFullPaths()
+
+        /// <summary>
+        /// configures generalized pathing information to the more specific Parts Configuration
+        /// </summary>
+        public void ConfigureFullPaths()
         {
             foreach (Part part in Parts)
             {
@@ -70,6 +150,9 @@ namespace SAPAPP.Configs
             }
         }
 
+        /// <summary>
+        /// Sorts the object's list of Parts in Alphabetical order by Part Name
+        /// </summary>
         public void Sort()
         {
             Parts.Sort(delegate (Part x, Part y)
@@ -81,6 +164,7 @@ namespace SAPAPP.Configs
             });
         }
 
+        /// <inheritdoc/>
         public new string ToString()
         {
             StringBuilder sb = new();
@@ -95,29 +179,45 @@ namespace SAPAPP.Configs
         }
     }
 
+    /// <summary>
+    /// A Serializable class containing a list configurations for Specific Products and their firmware
+    /// </summary>
     [Serializable]
     public class FirmwareConfigs
     {
+        /// <summary>
+        /// general location where all firmware configs are stored
+        /// </summary>
         public string SoftwareFolderLocation
         {
             get => field;
             set
             {
                 field = value;
-                configureFullPaths();
+                ConfigureFullPaths();
             }
-        }
+        } = "";
 
-        public List<Product> Products { get; set; }
-        public void configureFullPaths()
+        /// <summary>
+        /// Stored list of products based on the deserialized xml file
+        /// </summary>
+        public List<Product> Products { get; set; } = [];
+
+        /// <summary>
+        /// configures generalized pathing information to the more specific Products Configuration
+        /// </summary>
+        public void ConfigureFullPaths()
         {
             foreach (Product product in Products)
             {
                 product.SoftwareFolderLocation = SoftwareFolderLocation;
-                product.configureFullPaths();
+                product.ConfigureFullPaths();
             }
         }
 
+        /// <summary>
+        /// Sorts the object's list of Products in Alphabetical order by Product Name
+        /// </summary>
         public void Sort()
         {
 
@@ -134,7 +234,8 @@ namespace SAPAPP.Configs
                 else return x.ProductName.CompareTo(y.ProductName);
             });
         }
-
+       
+        /// <inheritdoc/>
         public new string ToString()
         {
             StringBuilder sb = new();

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows;
 
-namespace SAPAPP
+namespace SAPAPP.Util
 {
 
     /// <summary>
@@ -10,8 +10,6 @@ namespace SAPAPP
     /// </summary>
 	public static class Settings
     {
-        public static string configFile = "FirmwareConfigurations.xml";
-
         /// <summary>
         /// Deserializes an XML file and returns a configuration object to change the data context of the main window's drop down selectors
         /// </summary>
@@ -36,19 +34,34 @@ namespace SAPAPP
             return configs;
         }
 
+        /// <summary>
+        /// Saves a firmware configuration to a specified firmware file
+        /// </summary>
+        /// <param name="configs">the configuration object to be serialized</param>
+        /// <param name="filename">the file to save the configuration to</param>
         public static void Save_Firmware_Configs(FirmwareConfigs configs, string filename)
         {
-            Save_XML<FirmwareConfigs>(configs, filename);
+            Save_XML(configs, filename);
         }
 
+        /// <summary>
+        /// Loads Dictionary configurations from a specified JSON file
+        /// </summary>
+        /// <param name="filename">the name of the file to be deserialized</param>
+        /// <returns>a dictionary object containing the information from the JSON file</returns>
         public static Dictionary<string, string> Load_Dictionary_Configs(string filename)
         {
             return Load_JSON<Dictionary<string, string>>(filename);
         }
 
+        /// <summary>
+        /// Saves a dictionary configuration to a specified JSON file
+        /// </summary>
+        /// <param name="configs">the configurations to be serialized</param>
+        /// <param name="filename">the file to save the configuration to</param>
         public static void Save_Dictionary_Configs(Dictionary<string, string> configs, string filename)
         {
-            Save_JSON<Dictionary<string, string>>(configs, filename);
+            Save_JSON(configs, filename);
         }
 
         private static T Load_JSON<T>(string filepath)
@@ -65,10 +78,7 @@ namespace SAPAPP
 
             // If the file didn't exist or otherwise couldn't be deserialized,
             // put default values into the settings object.
-            if (settings == null)
-            {
-                settings = Activator.CreateInstance<T>();
-            }
+            settings ??= Activator.CreateInstance<T>();
 
             return settings;
         }
@@ -93,10 +103,7 @@ namespace SAPAPP
 
             // If the file didn't exist or otherwise couldn't be deserialized,
             // put default values into the settings object.
-            if (settings == null)
-            {
-                settings = Activator.CreateInstance<T>();
-            }
+            settings ??= Activator.CreateInstance<T>();
 
             return settings;
         }
@@ -124,7 +131,8 @@ namespace SAPAPP
         /// <summary>
         /// Get the full path to an XML file where settings are stored.
         /// </summary>
-        /// <param name="settingsName">name of the file (not including the extension)</param>
+        /// <param name="directory"></param>
+        /// <param name="fileName">name of the file (not including the extension)</param>
         /// <returns>full file path</returns>
         public static string GetFilePath(string directory, string fileName)
         {

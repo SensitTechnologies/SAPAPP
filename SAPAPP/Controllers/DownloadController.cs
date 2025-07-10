@@ -1,11 +1,15 @@
 ﻿using SAPAPP.AutoScripts;
 using SAPAPP.Configs;
+using SAPAPP.Util;
 using System.ComponentModel;
 using System.Diagnostics;
 
 namespace SAPAPP.Controllers
 {
-    internal class DownloadController
+    /// <summary>
+    /// public class dedicated to controlling the flow of all background processes related to downloads
+    /// </summary>
+    public class DownloadController
     {
 
         #region Instance Variables
@@ -49,11 +53,13 @@ namespace SAPAPP.Controllers
         // signals when to search and download
         private bool Running = false;
 
-        // tells whether automatic mode is on or off
+        /// <summary>
+        /// Determines whether The active script can be used in Automatic mode or not
+        /// </summary>
         public bool AutomaticOn => ScriptHasAutomatic();
 
         // Feedback Devices
-        private readonly Logger logger = new();
+        private readonly Logger Logger = new();
         private Action<string> UpdateMessageAction { get; set; } = (message) =>
         {
             Debug.WriteLine(message);
@@ -68,6 +74,9 @@ namespace SAPAPP.Controllers
 
         #region Constructors
 
+        /// <summary>
+        /// Creates a new Download Controller object and starts the background worker
+        /// </summary>
         public DownloadController()
         {
 
@@ -81,17 +90,27 @@ namespace SAPAPP.Controllers
             worker.RunWorkerAsync();
         }
 
-        public DownloadController(Logger lg) : this()
+        /// <summary>
+        /// Creates a new Download Controller object with the given parameters
+        /// </summary>
+        /// <param name="logger">a Logger object created from the main window</param>
+        public DownloadController(Logger logger) : this()
         {
-            logger = lg;
+            Logger = logger;
 
-            STMScript = new STMScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
-            MegaScript = new MegaScript(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
-            MSPScript = new MSP430Script(logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            STMScript = new STMScript(Logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            MegaScript = new MegaScript(Logger, UpdateMessageFeedback, UpdateProgbarFeedback);
+            MSPScript = new MSP430Script(Logger, UpdateMessageFeedback, UpdateProgbarFeedback);
 
             scripts = [STMScript, MegaScript, MSPScript];
         }
 
+        /// <summary>
+        /// Creates a new Download Controller object with the given parameters
+        /// </summary>
+        /// <param name="logger">a Logger object created from the main window</param>
+        /// <param name="updateFeedbackAction">a method from the main window for updating the feedback region of the UI</param>
+        /// <param name="updateProgBarAction">a method from the main window for updating the progress bar region of the UI</param>
         public DownloadController(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : this(logger)
         {
             UpdateMessageAction = updateFeedbackAction;
@@ -118,10 +137,8 @@ namespace SAPAPP.Controllers
             return null;
         }
 
-        /// <summary>
-        /// Determines whether The active script can be used in Automatic mode or not
-        /// </summary>
-        /// <returns></returns>
+
+        // Determines whether The active script can be used in Automatic mode or not
         private bool ScriptHasAutomatic()
         {
             return ActiveScript().GetCapableAutomatic();
@@ -196,7 +213,7 @@ namespace SAPAPP.Controllers
         /// <summary>
         /// Sets download as the current download and turns the search and download algorithm on.
         /// </summary>
-        /// <param name="download"></param>
+        /// <param name="download">The Firmware configuration for a specific part being donwloaded</param>
         public void StartRunning(Part download)
         {
             if (!Running)
@@ -226,7 +243,7 @@ namespace SAPAPP.Controllers
         /// <param name="message"></param>
         private void LogNUpdate_Info(string message)
         {
-            logger.Log(message, Logger.LogType.Info);
+            Logger.Log(message, Logger.LogType.Info);
             UpdateMessageFeedback(message);
         }
 

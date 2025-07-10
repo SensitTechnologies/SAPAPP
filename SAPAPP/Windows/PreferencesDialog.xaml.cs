@@ -15,7 +15,7 @@ namespace SAPAPP
     {
         readonly MainWindow parentWindow;
 
-        readonly string log_location = "";
+        readonly string Log_Location = "";
         readonly string Firmware_Config_Location = "";
         readonly string Software_Folder_Location = "";
         readonly string STM32_Location = "";
@@ -28,10 +28,10 @@ namespace SAPAPP
         /// allowing configuration settings to be adjusted
         /// based on the level of need and use case.
         /// </summary>
-        /// <param name="parentWindow"></param>
+        /// <param name="parentWindow">
         /// Highlights the way the main window serves as a
         /// parent to the child window of the preference dialog.
-        /// </summary>
+        /// </param>
         public PreferencesDialog(MainWindow parentWindow)
         {
             InitializeComponent();
@@ -39,16 +39,29 @@ namespace SAPAPP
 
         }
 
+        /// <summary>
+        /// Represents a dialog window that can be useful
+        /// for managing different user preferences and
+        /// allowing configuration settings to be adjusted
+        /// based on the level of need and use case. 
+        /// </summary>
+        /// <param name="parentWindow">Highlights the way the main window serves as a parent to the child window of the preference dialog.</param>
+        /// <param name="log_location">Details the current location of the log file for display purposes</param>
+        /// <param name="firmware_config_location">Details the current location of the Firmware config file for display purposes</param>
+        /// <param name="software_folder_location">Details the current location of the Software Folder for display purposes</param>
+        /// <param name="STM32_location">Details the current location of STM32 Cube Programmer for display purposes</param>
+        /// <param name="uniflash_location">Details the current location of TI Uniflash for display purposes</param>
+        /// <param name="AVRDUDE_location">Details the current location of the AVRDUDE for display purposes</param>
         public PreferencesDialog(MainWindow parentWindow,
-            string log_location, string firmware_config_location, string software_folder_location, string STM32_focation, string uniflash_location, string AVRDUDE_location)
+            string log_location, string firmware_config_location, string software_folder_location, string STM32_location, string uniflash_location, string AVRDUDE_location)
             : this(parentWindow)
         {
-            this.log_location = log_location;
-            this.Firmware_Config_Location = firmware_config_location;
-            this.Software_Folder_Location = software_folder_location;
-            this.STM32_Location = STM32_focation;
-            this.Uniflash_Location = uniflash_location;
-            this.AVRDUDE_Location = AVRDUDE_location;
+            Log_Location = log_location;
+            Firmware_Config_Location = firmware_config_location;
+            Software_Folder_Location = software_folder_location;
+            STM32_Location = STM32_location;
+            Uniflash_Location = uniflash_location;
+            AVRDUDE_Location = AVRDUDE_location;
 
             ConfigureTextBoxes();
         }
@@ -56,7 +69,7 @@ namespace SAPAPP
 
         private void ConfigureTextBoxes()
         {
-            Log_Location_TextBox.Text = log_location;
+            Log_Location_TextBox.Text = Log_Location;
             Firmware_Config_Location_TextBox.Text = Firmware_Config_Location;
             Software_Folder_Location_TextBox.Text = Software_Folder_Location;
             STM32_Location_TextBox.Text = STM32_Location;
@@ -72,12 +85,13 @@ namespace SAPAPP
         /// a text-based log file or .txt, and upload it with the selected
         /// file type and path.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of an click event through the Browse Log button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// Whereas this serves as the event data that is associated with a
         /// click.
-        /// </summary>
+        /// </param>
         private void BrowseLog_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -97,12 +111,13 @@ namespace SAPAPP
         /// a XML-based config file, and upload it with the selected
         /// file type and path.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of an click event through the Browse Config button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// Whereas this serves as the event data that is associated with a
         /// click.
-        /// </summary>
+        /// </param>
         private void BrowseFirmwareConfig_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -145,12 +160,13 @@ namespace SAPAPP
         /// the STM32 programmer tool, and upload it with the selected
         /// executable file and path.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of an click event through the Browse STM32 button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// Whereas this serves as the event data that is associated with a
         /// click.
-        /// </summary>
+        /// </param>
         private void BrowseSTM32_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
@@ -176,12 +192,13 @@ namespace SAPAPP
         /// the Fet Batch Script, and upload it with the selected
         /// executable file and path.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of an click event through the Browse STM32 button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// Whereas this serves as the event data that is associated with a
         /// click.
-        /// </summary>
+        /// </param>
         private void BrowseUniflashLocation_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog openFolderDialog = new()
@@ -207,17 +224,18 @@ namespace SAPAPP
         /// the ATmega programmer tool, and upload it with the selected
         /// executable file and path.
         /// </summary>
-        /// <param name="sender"></param>
-        /// Serves as the source of an click event through the Browse ATmega button.
-        /// <param name="e"></param>
+        /// <param name="sender">
+        /// Serves as the source of an click event through the Browse STM32 button.
+        /// </param>
+        /// <param name="e">
         /// Whereas this serves as the event data that is associated with a
         /// click.
-        /// </summary>
+        /// </param>
         private void BrowseATmega_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
-                Title = "Select ATmega Programmer (atprogram.exe)",
+                Title = "Select ATmega Programmer (avrdude.exe)",
                 Filter = "Executable Files (*.exe)|*.exe",
                 FileName = AVRDUDE_Location_TextBox.Text,
                 InitialDirectory = AVRDUDE_Location_TextBox.Text == "" ?
@@ -237,14 +255,15 @@ namespace SAPAPP
         /// paths through the apply functionality of pushing it to the
         /// application, as well as assigning paths.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of a click event through the OK button.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// This serves as the event data that is associated with a click.
-        /// </summary>
+        /// </param>
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
+            DialogResult = true;
 
             if (Firmware_Config_Location_TextBox.Text != Firmware_Config_Location)
             {
@@ -271,22 +290,23 @@ namespace SAPAPP
                 parentWindow.AVRDUDE_CLI = AVRDUDE_Location_TextBox.Text;
             }
 
-            this.Close();
+            Close();
         }
 
         /// <summary>
         /// Handles the click event for the Cancel button, setting the aspect
         /// of a dialog result to be set to false and close the window.
         /// </summary>
-        /// <param name="sender"></param>
+        /// <param name="sender">
         /// Serves as the source of an event, as the cancel functionality.
-        /// <param name="e"></param>
+        /// </param>
+        /// <param name="e">
         /// The event data that is associated with each cancel button click. 
-        /// </summary>
+        /// </param>
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
     }
 }

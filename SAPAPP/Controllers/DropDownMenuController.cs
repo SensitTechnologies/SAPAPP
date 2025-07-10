@@ -1,27 +1,36 @@
 ﻿using SAPAPP.Configs;
+using SAPAPP.Util;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 
-/// <summary>
-/// ViewModel has the ability of managing product and part
-/// selections.
-/// Maintains a list of available products and parts, along with a
-/// mapping of file paths and structures between them.
-/// Helps in handling of selection updates, dialog notifications of 
-/// changes and persists selections within a JSON file.
-/// </summary>
-
 namespace SAPAPP.Controllers
 {
+    /// <summary>
+    /// ViewModel has the ability of managing product and part
+    /// selections.
+    /// Maintains a list of available products and parts, along with a
+    /// mapping of file paths and structures between them.
+    /// Helps in handling of selection updates, dialog notifications of 
+    /// changes and persists selections within a JSON file.
+    /// </summary>
     public class DropDownMenuController : INotifyPropertyChanged
     {
+        /// <summary>
+        /// List of configured Products contained in the configuration file
+        /// </summary>
         public ObservableCollection<string> ProductsList { get; set; }
+
+        /// <summary>
+        /// List of configured Parts contained in the configuration file
+        /// </summary>
         public ObservableCollection<string> PartsList { get; set; }
-        public Dictionary<string, List<string>> ProductPartMap { get; set; }
+        private Dictionary<string, List<string>> ProductPartMap { get; set; }
         private static readonly string selections_save_File = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP", "selection.json");
 
-        private string _selectedProduct;
+        /// <summary>
+        /// Product Name currently displayed in the drop down menu
+        /// </summary>
         public string SelectedProduct
         {
             get => _selectedProduct;
@@ -33,8 +42,12 @@ namespace SAPAPP.Controllers
                 SaveSelection();
             }
         }
+        
+        private string _selectedProduct ="";
 
-        private string _selectedPart;
+        /// <summary>
+        /// Part Name currently displayed in the drop down menu
+        /// </summary>
         public string SelectedPart
         {
             get => _selectedPart;
@@ -46,13 +59,15 @@ namespace SAPAPP.Controllers
             }
         }
 
+        private string _selectedPart ="";
+
         /// <summary>
         /// Initializations of new instances of the DropDownMenuController
         /// class, and in setting up both product and part lists based on
         /// the instances of provided firmware configurations through
         /// ensuring a default selection. 
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="config">
         /// The firmware configuration is conveyed in containing both product
         /// and part details used in the initialization of selections. 
         /// </param>
@@ -152,13 +167,14 @@ namespace SAPAPP.Controllers
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <inheritdoc/>
+        public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
         /// Notifies users of a change in the property of the selection process
         /// and invokes the PropertyChanged event with a specified property name.
         /// </summary>
-        /// <param name="propertyName"></param>
+        /// <param name="propertyName">
         /// Serves as the process of the property of the name change. 
         /// </param>
         protected void OnPropertyChanged(string propertyName)

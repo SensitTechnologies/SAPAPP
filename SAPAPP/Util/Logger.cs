@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
 
-namespace SAPAPP
+namespace SAPAPP.Util
 {
+    /// <summary>
+    /// Class functionality for logging messages and from the program into log files based on user actions
+    /// </summary>
     public class Logger
     {
 
@@ -10,11 +13,34 @@ namespace SAPAPP
         /// </summary>
         public enum LogType
         {
-            Info, Warn, Error, Pass, Fail
+            /// <summary>
+            /// Details information about a process
+            /// </summary>
+            Info, 
+
+            /// <summary>
+            /// Warnings to the user about what they are doing
+            /// </summary>
+            Warn, 
+
+            /// <summary>
+            /// When errors happen inside the program
+            /// </summary>
+            Error, 
+
+            /// <summary>
+            /// When a procedure passes
+            /// </summary>
+            Pass, 
+
+            /// <summary>
+            /// When a procedure fails
+            /// </summary>
+            Fail
         }
 
         /// <summary>
-        /// Defines how the logger should save the log. By default this will report to the debug terminal.
+        /// Defines how the Logger should save the log. By default this will report to the debug terminal.
         /// </summary>
         private Action<string, LogType> LogAction { get; set; } = (message, type) =>
         {
@@ -32,14 +58,14 @@ namespace SAPAPP
         /// <summary>
         /// The Logger is used to record messages and error levels for display of information
         /// </summary>
-        /// <param name="logAction">Defines how the logger should save the log. By default this will report to the debug terminal.</param>
+        /// <param name="logAction">Defines how the Logger should save the log. By default this will report to the debug terminal.</param>
         public Logger(Action<string, LogType> logAction) : base()
         {
             LogAction = logAction;
         }
 
         /// <summary>
-        /// Function used to write to the logger
+        /// Function used to write to the Logger
         /// </summary>
         /// <param name="message">Message to be written</param>
         /// <param name="level">The logging level/ level of severity of the message</param>

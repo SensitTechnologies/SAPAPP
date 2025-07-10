@@ -1,4 +1,5 @@
 ﻿using SAPAPP.Configs;
+using SAPAPP.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -6,27 +7,36 @@ using System.Windows;
 
 namespace SAPAPP.AutoScripts
 {
-    internal class STMScript : Script
+    /// <inheritdoc/>
+    public class STMScript : Script
     {
-        private string _stm32_prog_cli;
+        private string _stm32_prog_cli = "";
+
+        /// <summary>
+        /// Pathway to the STM32 Cube Programmer integration
+        /// </summary>
         public string STM32_Programmer_CLI
         {
             get => _stm32_prog_cli; set => _stm32_prog_cli = value;
         }
 
         #region Constructors
+
+        /// <inheritdoc/>
         public STMScript() : base()
         {
             CompatibleArchitecture = Architecture.STM32;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public STMScript(Logger logger) : base(logger)
         {
             CompatibleArchitecture = Architecture.STM32;
             //CapableAutomatic = false;
         }
 
+        /// <inheritdoc/>
         public STMScript(Logger logger, Action<string> updateFeedbackAction, Action<int> updateProgBarAction) : base(logger, updateFeedbackAction, updateProgBarAction)
         {
             CompatibleArchitecture = Architecture.STM32;
@@ -37,6 +47,7 @@ namespace SAPAPP.AutoScripts
 
         #region Search, and Download algorithms
 
+        /// <inheritdoc/>
         public override bool Detect()
         {
             if (!File.Exists(STM32_Programmer_CLI))
@@ -94,6 +105,7 @@ namespace SAPAPP.AutoScripts
             }
         }
 
+        /// <inheritdoc/>
         public override void Download(Part currentDownload)
         {
             //extra data needed
@@ -128,12 +140,12 @@ namespace SAPAPP.AutoScripts
                     if (line.Contains("Error:"))
                     {
                         //e.Result = eventArgs.Data;
-                        logger.Log(eventArgs.Data, Logger.LogType.Error);
+                        Logger.Log(eventArgs.Data, Logger.LogType.Error);
                         HandleError(eventArgs.Data);
                     }
                     else
                     {
-                        logger.Log(eventArgs.Data, Logger.LogType.Info);
+                        Logger.Log(eventArgs.Data, Logger.LogType.Info);
                         //UpdateProgress(eventArgs.Data);
                     }
                     */
@@ -145,7 +157,7 @@ namespace SAPAPP.AutoScripts
                 {
                     ProcessOutputData(eventArgs.Data);
                     //e.Result = eventArgs.Data;
-                    //logger.Log(eventArgs.Data, Logger.LogType.Error);
+                    //Logger.Log(eventArgs.Data, Logger.LogType.Error);
                     //HandleError(eventArgs.Data);
                 }
             });
@@ -161,6 +173,7 @@ namespace SAPAPP.AutoScripts
 
         #region Feedback Filtering
 
+        /// <inheritdoc/>
         protected override void HandleError(string line)
         {
             line = line.Trim();
@@ -173,17 +186,18 @@ namespace SAPAPP.AutoScripts
             //Cancel();
         }
 
+        /// <inheritdoc/>
         protected override void ProcessOutputData(string data)
         {
             string line = data.Trim();
             if (line.Contains("Error"))
             {
-                logger.Log(line, Logger.LogType.Error);
+                Logger.Log(line, Logger.LogType.Error);
                 HandleError(line);
             }
             else
             {
-                logger.Log(line, Logger.LogType.Info);
+                Logger.Log(line, Logger.LogType.Info);
 
                 string DisplayMessage = "";
                 int progress = -1;

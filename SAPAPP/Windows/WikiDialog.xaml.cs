@@ -12,6 +12,9 @@ namespace SAPAPP
         private readonly Stack<string> navigationHistory = new();
         private readonly Stack<string> forwardHistory = new();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public WikiDialog()
         {
             InitializeComponent();
@@ -24,7 +27,7 @@ namespace SAPAPP
         /// <param name="e"></param>
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         /// <summary>
@@ -129,14 +132,12 @@ namespace SAPAPP
             {
                 foreach (TabItem tab in MainTabControl.Items)
                 {
-                    var textBlocks = tab.Content as ScrollViewer;
-                    if (textBlocks != null)
+                    if (tab.Content is ScrollViewer textBlocks)
                     {
-                        var stackPanel = textBlocks.Content as StackPanel;
-                        if (stackPanel != null)
+                        if (textBlocks.Content is StackPanel stackPanel)
                         {
                             bool matchFound = stackPanel.Children.OfType<TextBlock>()
-                                .Any(tb => tb.Text.ToLower().Contains(searchText));
+                                .Any(tb => tb.Text.Contains(searchText, StringComparison.CurrentCultureIgnoreCase));
 
                             tab.Visibility = matchFound ? Visibility.Visible : Visibility.Collapsed;
                         }
@@ -163,7 +164,7 @@ namespace SAPAPP
                 if (start.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
                 {
                     string textRun = start.GetTextInRun(LogicalDirection.Forward);
-                    int index = textRun.ToLower().IndexOf(searchText.ToLower());
+                    int index = textRun.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase);
 
                     if (index >= 0)
                     {
@@ -196,13 +197,11 @@ namespace SAPAPP
 
                     foreach (TabItem tab in MainTabControl.Items)
                     {
-                        var textBlocks = tab.Content as ScrollViewer;
-                        if (textBlocks != null)
+                        if (tab.Content is ScrollViewer textBlocks)
                         {
-                            var stackPanel = textBlocks.Content as StackPanel;
-                            if (stackPanel != null)
+                            if (textBlocks.Content is StackPanel stackPanel)
                             {
-                                if (stackPanel.Children.OfType<TextBlock>().Any(tb => tb.Text.ToLower().Contains(searchQuery)))
+                                if (stackPanel.Children.OfType<TextBlock>().Any(tb => tb.Text.Contains(searchQuery, StringComparison.CurrentCultureIgnoreCase)))
                                 {
                                     MessageBox.Show($"Navigating to: {tab.Header}", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
                                     MainTabControl.SelectedItem = tab;
