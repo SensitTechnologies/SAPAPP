@@ -20,10 +20,12 @@ namespace SAPAPP
 
         private readonly bool _BeyondStartup = false;
         private DownloadController DownloadController;
-        private FirmwareConfigs configs = new();
+        private ConfigController ConfigController;
+        private FirmwareConfigs configs => ConfigController.Configs;
 
         private static readonly string APP_DATA_FOLDER = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SAPAPP");
         private static readonly string PRODUCT_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "FirmwareConfigurations.xml");
+        private static readonly string CONFIG_PATHWAYS_FILE = Path.Combine(APP_DATA_FOLDER, "FirmwareConfigFiles.json");
         private static readonly string PATH_CONFIG_FILE = Path.Combine(APP_DATA_FOLDER, "CLI_configs.json");
         private static readonly string LOGGER_FILE = Path.Combine(APP_DATA_FOLDER, "log.txt");
 
@@ -43,7 +45,7 @@ namespace SAPAPP
             {
                 configs.SoftwareFolderLocation = value;
                 configs.ConfigureFullPaths();
-                Save_Firmware();
+                ConfigController.SaveToConfigFile();
             }
         }
 
@@ -112,6 +114,7 @@ namespace SAPAPP
             }
 
             DownloadController = new DownloadController(Logger, UpdateFeedbackMessages, UpdateProgressBar);
+            ConfigController = new ConfigController(Logger, PRODUCT_CONFIG_FILE, CONFIG_PATHWAYS_FILE);
 
             ConfigureOnStartup();
             Logger.Log("Startup Complete", LogType.Info);
@@ -148,10 +151,6 @@ namespace SAPAPP
             Load_CLIs(PATH_CONFIG_FILE);
 
             // Load product configurations for the first time
-            if (!File.Exists(PRODUCT_CONFIG_FILE))
-            {
-                Save_Firmware();
-            }
             Load_Product_Configurations(PRODUCT_CONFIG_FILE);
         }
 
@@ -199,13 +198,11 @@ namespace SAPAPP
         /// <param name="filename"></param>
         public void Load_Product_Configurations(string filename)
         {
-            configs = Settings.Open_Firmware_Configs(filename);
-            Logger.Log("Loaded Firmware Configurations from file: " + filename, LogType.Info);
+            ConfigController.LoadConfigFile(filename);
 
             DropDownMenuController newContext = new(configs);
             if (filename != PRODUCT_CONFIG_FILE)
             {
-                Settings.Save_Firmware_Configs(configs, PRODUCT_CONFIG_FILE);
                 newContext.SelectedProduct = "---";
                 newContext.SelectedPart = "---";
             }
@@ -355,7 +352,7 @@ namespace SAPAPP
             StatusMessageDisplay.Text = "Preferences option selected";
 
             PreferencesDialog preferencesDialog = new(this,
-                LOGGER_FILE, PRODUCT_CONFIG_FILE, SoftwareFolderLocation,
+                LOGGER_FILE, ConfigController.LastLoadedCloudFile, SoftwareFolderLocation,
                 STM32_PROGRAMMER_CLI, TI_UNIFLASH_FOLDER, AVRDUDE_CLI);
             preferencesDialog.ShowDialog();  // Opens it as a modal window
         }
