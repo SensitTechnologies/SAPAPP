@@ -43,7 +43,7 @@ namespace SAPAPP.Configs
         public Architecture Architecture { get; set; }
 
         /// <summary>
-        /// general location where all firmware configs are stored
+        /// general location where all firmware Configs are stored
         /// </summary>
         public string SoftwareFolderLocation { get; set; } = "";
 
@@ -124,7 +124,7 @@ namespace SAPAPP.Configs
         public string ProductName { get; set; } = "---";
 
         /// <summary>
-        /// general location where all firmware configs are stored
+        /// general location where all firmware Configs are stored
         /// </summary>
         public string SoftwareFolderLocation { get; set; } = "";
 
@@ -186,7 +186,7 @@ namespace SAPAPP.Configs
     public class FirmwareConfigs
     {
         /// <summary>
-        /// general location where all firmware configs are stored
+        /// general location where all firmware Configs are stored
         /// </summary>
         public string SoftwareFolderLocation
         {
